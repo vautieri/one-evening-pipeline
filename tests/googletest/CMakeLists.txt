@@ -1,0 +1,8 @@
+add_executable(test_math_gtest test_math_gtest.cpp)
+target_link_libraries(test_math_gtest PRIVATE jsbsim_math GTest::gtest_main)
+include(GoogleTest)
+gtest_discover_tests(test_math_gtest)
+
+add_executable(test_atmosphere_gtest test_atmosphere_gtest.cpp)
+target_link_libraries(test_atmosphere_gtest PRIVATE jsbsim_atmosphere GTest::gtest_main)
+gtest_discover_tests(test_atmosphere_gtest)

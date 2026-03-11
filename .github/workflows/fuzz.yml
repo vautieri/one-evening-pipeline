@@ -1,0 +1,77 @@
+name: Fuzz Testing (libFuzzer)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Run nightly at 03:00 UTC for deeper fuzzing
+    - cron: '0 3 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  fuzz:
+    name: libFuzzer + ASan + UBSan
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [fuzz_vector_ops, fuzz_matrix_ops, fuzz_atmosphere]
+        include:
+          - target: fuzz_vector_ops
+            corpus: tests/fuzz/corpus/vector
+          - target: fuzz_matrix_ops
+            corpus: tests/fuzz/corpus/matrix
+          - target: fuzz_atmosphere
+            corpus: tests/fuzz/corpus/atmosphere
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Clang
+        run: sudo apt-get update && sudo apt-get install -y clang
+
+      - name: Configure CMake (fuzzing build)
+        run: >
+          cmake -B build-fuzz
+          -DCMAKE_C_COMPILER=clang
+          -DCMAKE_CXX_COMPILER=clang++
+          -DCMAKE_BUILD_TYPE=Debug
+          -DENABLE_FUZZING=ON
+          -DENABLE_GTEST=OFF
+          -DENABLE_CATCH2=OFF
+          -DENABLE_DOCTEST=OFF
+          -DENABLE_BOOSTTEST=OFF
+          -DENABLE_CPPUNIT=OFF
+
+      - name: Build fuzz targets
+        run: cmake --build build-fuzz -j$(nproc)
+
+      - name: Run ${{ matrix.target }}
+        run: |
+          # On PRs/pushes: quick 60-second run to catch regressions
+          # On schedule: deeper 300-second run
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            MAX_TIME=300
+          else
+            MAX_TIME=60
+          fi
+          ./build-fuzz/tests/fuzz/${{ matrix.target }} \
+            ${{ matrix.corpus }} \
+            -max_total_time=$MAX_TIME \
+            -print_final_stats=1
+
+      - name: Upload crash artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fuzz-crashes-${{ matrix.target }}
+          path: |
+            crash-*
+            leak-*
+            timeout-*

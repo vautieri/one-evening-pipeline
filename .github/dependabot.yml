@@ -1,0 +1,15 @@
+version: 2
+updates:
+  # Monitor GitHub Actions versions for security patches
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "ci"
+
+  # Monitor CMake FetchContent dependencies
+  # (Dependabot doesn't natively parse CMake FetchContent, but this
+  #  entry ensures the Actions ecosystem is tracked. For FetchContent
+  #  deps like gtest/Catch2/doctest, pin to tags in CMakeLists.txt
+  #  and manually bump when new releases are published.)

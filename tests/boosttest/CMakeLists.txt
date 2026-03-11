@@ -1,0 +1,4 @@
+add_executable(test_math_boost test_math_boost.cpp)
+target_link_libraries(test_math_boost PRIVATE jsbsim_math Boost::unit_test_framework)
+target_compile_definitions(test_math_boost PRIVATE BOOST_TEST_DYN_LINK)
+add_test(NAME boost_math COMMAND test_math_boost)

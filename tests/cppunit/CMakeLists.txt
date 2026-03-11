@@ -1,0 +1,3 @@
+add_executable(test_math_cppunit test_math_cppunit.cpp)
+target_link_libraries(test_math_cppunit PRIVATE jsbsim_math PkgConfig::CPPUNIT)
+add_test(NAME cppunit_math COMMAND test_math_cppunit)

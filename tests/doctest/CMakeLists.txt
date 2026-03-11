@@ -1,0 +1,7 @@
+add_executable(test_math_doctest test_math_doctest.cpp)
+target_link_libraries(test_math_doctest PRIVATE jsbsim_math doctest::doctest)
+add_test(NAME doctest_math COMMAND test_math_doctest)
+
+add_executable(test_atmosphere_doctest test_atmosphere_doctest.cpp)
+target_link_libraries(test_atmosphere_doctest PRIVATE jsbsim_atmosphere doctest::doctest)
+add_test(NAME doctest_atmosphere COMMAND test_atmosphere_doctest)

@@ -1,0 +1,8 @@
+add_executable(test_math_catch2 test_math_catch2.cpp)
+target_link_libraries(test_math_catch2 PRIVATE jsbsim_math Catch2::Catch2WithMain)
+include(Catch)
+catch_discover_tests(test_math_catch2)
+
+add_executable(test_atmosphere_catch2 test_atmosphere_catch2.cpp)
+target_link_libraries(test_atmosphere_catch2 PRIVATE jsbsim_atmosphere Catch2::Catch2WithMain)
+catch_discover_tests(test_atmosphere_catch2)

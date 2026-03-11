@@ -1,0 +1,31 @@
+# Build directories
+build/
+build-*/
+cmake-build-*/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Claude Code session data
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Compiled objects
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+
+# Fuzz artifacts (crashes are uploaded via CI, not committed)
+crash-*
+leak-*
+timeout-*
