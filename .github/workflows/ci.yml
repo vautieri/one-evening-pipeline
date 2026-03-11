@@ -92,27 +92,33 @@ jobs:
 
       - name: Collect coverage data
         run: |
-          # lcov 2.x (Ubuntu 24.04+) requires broader --ignore-errors flags
+          lcov --version
+          # lcov 2.x (Ubuntu 24.04+) has stricter error handling
           lcov --capture --directory build --output-file coverage.info \
-            --ignore-errors mismatch,mismatch \
-            --ignore-errors empty,empty \
-            --ignore-errors gcov,gcov
+            --ignore-errors mismatch \
+            --ignore-errors empty \
+            --ignore-errors gcov \
+            --ignore-errors source \
+            --ignore-errors inconsistent \
+            --ignore-errors negative
           # Remove framework and system headers from report
           lcov --remove coverage.info \
             '/usr/*' \
             '*/build/_deps/*' \
             '*/tests/*' \
             --output-file coverage-filtered.info \
-            --ignore-errors unused,unused
+            --ignore-errors unused \
+            --ignore-errors empty
 
       - name: Coverage summary
-        run: lcov --summary coverage-filtered.info --ignore-errors empty,empty
+        run: lcov --summary coverage-filtered.info --ignore-errors empty
 
       - name: Generate HTML coverage report
         run: |
           genhtml coverage-filtered.info --output-directory coverage-html \
             --title "Unit Test Coverage" \
-            --ignore-errors inconsistent,inconsistent
+            --ignore-errors inconsistent \
+            --ignore-errors empty
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
