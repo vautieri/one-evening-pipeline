@@ -35,3 +35,4 @@ message(STATUS "    CppUnit . . . . ${ENABLE_CPPUNIT}")
 message(STATUS "    libFuzzer . . . ${ENABLE_FUZZING}")
 message(STATUS "═══════════════════════════════════════════════════════════")
 message(STATUS "")
+
