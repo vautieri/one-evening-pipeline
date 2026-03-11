@@ -21,7 +21,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install Clang (if needed)
         if: matrix.compiler == 'clang'
@@ -55,7 +55,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-results-${{ matrix.compiler }}-${{ matrix.build_type }}
           path: build/test-results.xml
@@ -67,7 +67,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install lcov
         run: sudo apt-get update && sudo apt-get install -y lcov
@@ -93,35 +93,43 @@ jobs:
       - name: Collect coverage data
         run: |
           lcov --version
-          # lcov 2.x (Ubuntu 24.04+) has stricter error handling
-          lcov --capture --directory build --output-file coverage.info \
+          # lcov 2.x (Ubuntu 24.04) needs --keep-going to not abort on
+          # strict errors that 1.x silently ignored.
+          lcov --keep-going --capture --directory build \
+            --output-file coverage.info \
             --ignore-errors mismatch \
             --ignore-errors empty \
             --ignore-errors gcov \
             --ignore-errors source \
             --ignore-errors inconsistent \
-            --ignore-errors negative
+            --ignore-errors negative \
+            --ignore-errors unused \
+            --ignore-errors version
           # Remove framework and system headers from report
-          lcov --remove coverage.info \
+          lcov --keep-going --remove coverage.info \
             '/usr/*' \
             '*/build/_deps/*' \
             '*/tests/*' \
             --output-file coverage-filtered.info \
             --ignore-errors unused \
-            --ignore-errors empty
+            --ignore-errors empty \
+            --ignore-errors source
 
       - name: Coverage summary
-        run: lcov --summary coverage-filtered.info --ignore-errors empty
+        run: lcov --keep-going --summary coverage-filtered.info --ignore-errors empty
 
       - name: Generate HTML coverage report
         run: |
           genhtml coverage-filtered.info --output-directory coverage-html \
             --title "Unit Test Coverage" \
+            --keep-going \
             --ignore-errors inconsistent \
-            --ignore-errors empty
+            --ignore-errors empty \
+            --ignore-errors source \
+            --ignore-errors unmapped
 
       - name: Upload coverage report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-report
           path: coverage-html/
