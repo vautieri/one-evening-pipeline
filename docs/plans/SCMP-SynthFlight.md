@@ -551,7 +551,7 @@ All third-party dependencies obtained via CMake `FetchContent` or other mechanis
 | Boost.Test    | System package with pinned version               |
 | CppUnit       | System package with pinned version               |
 | libFuzzer     | Bundled with compiler (version follows GCC)      |
-| JSBSim        | FetchContent with pinned Git tag or commit hash  |
+| JSBSim        | Git submodule pinned to tag v1.2.4 (commit e07a7d81) at extern/jsbsim |
 
 - Dependency updates are managed via `dependabot.yml` with automatic PR creation
 - Dependency PRs are subject to `dependency-review.yml` checks

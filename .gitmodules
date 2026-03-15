@@ -1,0 +1,3 @@
+[submodule "extern/jsbsim"]
+	path = extern/jsbsim
+	url = https://github.com/JSBSim-Team/jsbsim.git
