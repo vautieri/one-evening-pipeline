@@ -24,7 +24,7 @@ docs/
 │   └── CDRL-Register.md            ← Master deliverables tracker (CDRL-SF-2026-001)
 ├── plans/
 │   ├── PSAC-SynthFlight.md         ← Certification plan (PSAC-SF-2026-001)
-│   ├── SDP-SynthFlight.md         ← Development plan (SDP-SF-2026-001)
+│   ├── SDP-SynthFlight.md          ← Development plan (SDP-SF-2026-001)
 │   ├── SVP-SynthFlight.md          ← Verification plan (SVP-SF-2026-001)
 │   ├── SCMP-SynthFlight.md         ← Config management plan (SCMP-SF-2026-001)
 │   └── SQAP-SynthFlight.md         ← Quality assurance plan (SQAP-SF-2026-001)
