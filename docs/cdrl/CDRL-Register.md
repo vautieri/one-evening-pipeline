@@ -9,10 +9,10 @@
 | **DAL**            | A (Catastrophic)                                             |
 | **Applicable Standard** | DO-178C (Software Considerations in Airborne Systems and Equipment Certification) |
 | **Coding Standard**| C++17 (2023), GCC                                            |
-| **SRS Reference**  | SRS-SF-2026-001 (149 unified requirements, SRS-SynthFlight.md) |
+| **SRS Reference**  | SRS-SF-2026-001 (119 unified requirements, SRS-SynthFlight.md) |
 | **Test Frameworks**| Google Test, Catch2, Doctest, Boost.Test, CppUnit, libFuzzer |
 | **CI/CD**          | GitHub Actions (build, test, coverage, CodeQL, fuzz, dependency-review) |
-| **Status**         | Draft                                                        |
+| **Status**         | Baselined                                                    |
 | **Prepared By**    | Software Quality Assurance                                   |
 | **Approved By**    | Program Manager / DER                                        |
 
@@ -50,8 +50,8 @@ This register covers all software life cycle data required for DAL A certificati
 | CDRL-SF-004 | SCMP | Software Configuration Management Plan | 11.4 | SCMP-SF-2026-001 | Draft | Required | 2026-05-15 |
 | CDRL-SF-005 | SQAP | Software Quality Assurance Plan | 11.5 | SQAP-SF-2026-001 | Draft | Required with Independence | 2026-05-15 |
 | CDRL-SF-006 | SRS | Software Requirements Standards | 11.6 | SRS-STD-SF-2026-001 | Draft | Required | 2026-05-15 |
-| CDRL-SF-007 | SDS | Software Design Standards | 11.7 | SDS-STD-SF-2026-001 | Draft | Required | 2026-05-15 |
-| CDRL-SF-008 | SCS | Software Code Standards | 11.8 | SCS-STD-SF-2026-001 | Draft | Required | 2026-05-15 |
+| CDRL-SF-007 | SDS | Software Design Standards | 11.7 | SDS-SF-2026-001 | Draft | Required | 2026-05-15 |
+| CDRL-SF-008 | SCS | Software Code Standards | 11.8 | SCS-SF-2026-001 | Draft | Required | 2026-05-15 |
 | CDRL-SF-009 | SRD | Software Requirements Data | 11.9 | SRD-SF-2026-001 | Draft | Required | 2026-07-01 |
 | CDRL-SF-010 | SDD | Software Design Description | 11.10 | SDD-SF-2026-001 | Not Started | Required | 2026-08-15 |
 | CDRL-SF-011 | SC | Source Code | 11.11 | SC-SF-2026-001 | Draft | Required | 2026-10-01 |
@@ -221,7 +221,7 @@ This register covers all software life cycle data required for DAL A certificati
 | **Abbreviation** | SDS-STD |
 | **DO-178C Reference** | Section 11.7 |
 | **DID Reference** | DI-IPSC-81432 |
-| **Document ID** | SDS-STD-SF-2026-001 |
+| **Document ID** | SDS-SF-2026-001 |
 | **File Path** | `docs/standards/SDS-STD-SynthFlight.md` |
 | **Status** | Draft |
 | **DAL A Applicability** | Required |
@@ -245,7 +245,7 @@ This register covers all software life cycle data required for DAL A certificati
 | **Abbreviation** | SCS-STD |
 | **DO-178C Reference** | Section 11.8 |
 | **DID Reference** | DI-IPSC-81433 |
-| **Document ID** | SCS-STD-SF-2026-001 |
+| **Document ID** | SCS-SF-2026-001 |
 | **File Path** | `docs/standards/SCS-STD-SynthFlight.md` |
 | **Status** | Draft |
 | **DAL A Applicability** | Required |
@@ -278,7 +278,7 @@ This register covers all software life cycle data required for DAL A certificati
 | **Responsible Role** | Software Requirements Lead |
 | **Review Authority** | Software Quality Assurance (SQA) / Systems Engineering |
 
-**Description:** The Software Requirements Data contains the high-level software requirements for SynthFlight. The current SRS (SRS-SF-2026-001) contains 149 unified requirements covering functional, performance, safety, interface, and environmental requirements for the UAV Mission Simulation and Verification Platform. Requirements are traceable to system-level requirements and to verification procedures.
+**Description:** The Software Requirements Data contains the high-level software requirements for SynthFlight. The current SRS (SRS-SF-2026-001) contains 119 unified requirements covering functional, performance, safety, interface, and environmental requirements for the UAV Mission Simulation and Verification Platform. Requirements are traceable to system-level requirements and to verification procedures.
 
 **DAL A Notes:** At DAL A, all high-level requirements must be traceable to system requirements. Derived requirements must be identified and provided to the system safety process. Requirements must be verifiable, conformant, and free of ambiguity. Requirements-based coverage must achieve 100%.
 
@@ -326,7 +326,7 @@ This register covers all software life cycle data required for DAL A certificati
 | **Responsible Role** | Software Development Lead |
 | **Review Authority** | Software Quality Assurance (SQA) / Peer Review |
 
-**Description:** The Source Code is the C++17 implementation of the SynthFlight UAV Mission Simulation and Verification Platform. Code is compiled using GCC and is subject to coding standards (SCS-STD-SF-2026-001), static analysis (CodeQL), and peer review. Source code is managed under configuration control via Git.
+**Description:** The Source Code is the C++17 implementation of the SynthFlight UAV Mission Simulation and Verification Platform. Code is compiled using GCC and is subject to coding standards (SCS-SF-2026-001), static analysis (CodeQL), and peer review. Source code is managed under configuration control via Git.
 
 **DAL A Notes:** At DAL A, source code must be traceable to low-level requirements. Code must comply with the approved code standards. Code reviews must verify accuracy, conformance to design, and compliance with standards. All source code is a controlled configuration item.
 
@@ -593,6 +593,7 @@ All 17 items must be Baselined. The SAS and SCI are the final items baselined. T
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
 | 1.0 | 2026-03-14 | Software Quality Assurance | Initial CDRL Register creation |
+| 1.1 | 2026-03-15 | Software Quality Assurance | Status changed to Baselined per Pre-Implementation Gate audit |
 
 ---
 
