@@ -6,7 +6,7 @@
 **Applicable Standard:** RTCA DO-178C, *Software Considerations in Airborne Systems and Equipment Certification*
 **Revision:** 1.0
 **Date:** 2026-03-14
-**Status:** Draft
+**Status:** Baselined
 
 ---
 
@@ -15,6 +15,7 @@
 | Rev | Date       | Author         | Description             |
 |-----|------------|----------------|-------------------------|
 | 1.0 | 2026-03-14 | SynthFlight SE | Initial release (Draft) |
+| 1.1 | 2026-03-15 | SynthFlight SE | Status changed to Baselined per Pre-Implementation Gate audit |
 
 ---
 

@@ -1692,3 +1692,221 @@ TEST_F(CFITDalA_Robustness, Evaluate_NegativeClearance_ClampedTo25)
     det.SetClearanceThreshold(-50.0);
     EXPECT_NEAR(det.GetClearanceThreshold(), CLEARANCE_MIN_FT, TIGHT_TOL);
 }
+
+// #############################################################################
+//  TAR-SF-003 Corrective Action: Pole-latitude ternary, empty-batch loop,
+//  and !impactDetected guard MC/DC coverage
+// #############################################################################
+
+// Named constants for pole-latitude tests (SCS-SF-2026-001: no magic numbers)
+//
+// IEEE 754 note: cos(90.0 * pi/180) is ~6.12e-17 (positive) due to
+// transcendental rounding, so metersPerDegLon > 0.0 evaluates TRUE.
+// To exercise the ternary FALSE branch (metersPerDegLon <= 0.0),
+// we use 90.01 / -90.01 degrees where cos returns a small negative.
+// The exact-90 case is covered by the integration test (Test 3).
+static constexpr double POLE_LAT_NORTH       =  90.0;   // degrees (exact pole)
+static constexpr double POLE_LAT_SOUTH       = -90.0;   // degrees (exact pole)
+static constexpr double POLE_LAT_NORTH_PAST  =  90.01;  // degrees (past pole, cos < 0)
+static constexpr double POLE_LAT_SOUTH_PAST  = -90.01;  // degrees (past pole, cos < 0)
+static constexpr double POLE_LON_START       =  45.0;   // degrees (arbitrary)
+static constexpr double POLE_ALT_MSL_FT      = 20000.0; // feet MSL – well above terrain
+static constexpr double POLE_SPEED_KTS       = 120.0;   // knots
+static constexpr double POLE_PREDICT_TIME_SEC = 30.0;   // seconds
+static constexpr double LON_DISPLACEMENT_TOL  = 1.0e-12; // degrees (effectively zero)
+static constexpr double POLE_ELEV_FLAT_M      = 0.0;    // meters – sea-level terrain at pole
+static constexpr double POLE_GRID_POSTING_M   = 30.0;   // meters – max allowed posting
+static constexpr size_t POLE_GRID_DIM         = 4;      // minimal grid size
+static constexpr double DESCENDING_INTO_TERRAIN_FPA = -6.0; // degrees – steep descent
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Test 1: PredictPosition at North Pole — ternary FALSE branch (metersPerDegLon <= 0)
+// ─────────────────────────────────────────────────────────────────────────────
+
+// MC/DC: PredictPosition ternary — metersPerDegLon <= 0.0 (FALSE branch)
+// At lat=90.01, cos(90.01deg) < 0, so metersPerDegLon < 0, forcing the
+// ternary FALSE branch and returning deltaLon = 0.0.
+// Verifies REQ-SF-0402
+TEST_F(CFITDalA_MCDC, PredictPosition_NorthPole_LonDisplacementZero)
+{
+    AircraftState state{};
+    state.latitude           = POLE_LAT_NORTH_PAST;  // 90.01 deg => cos < 0
+    state.longitude          = POLE_LON_START;
+    state.altitudeMSL        = POLE_ALT_MSL_FT;
+    state.altitudeAGL        = POLE_ALT_MSL_FT;
+    state.groundSpeedKts     = POLE_SPEED_KTS;
+    state.trackAngleDeg      = TRACK_EAST;       // eastward – maximises lon component
+    state.flightPathAngleDeg = FPA_LEVEL;
+    state.verticalSpeedFPM   = 0.0;
+
+    double predLat   = 0.0;
+    double predLon   = 0.0;
+    double predAltMSL = 0.0;
+    TerrainCollisionDetector::PredictPosition(state, POLE_PREDICT_TIME_SEC,
+                                              predLat, predLon, predAltMSL);
+
+    // Longitude must remain unchanged: the ternary returns 0.0 for deltaLon
+    EXPECT_NEAR(predLon, POLE_LON_START, LON_DISPLACEMENT_TOL);
+
+    // Latitude may change; verify it is finite and not NaN
+    EXPECT_FALSE(std::isnan(predLat));
+
+    // Altitude should remain unchanged for level flight
+    EXPECT_NEAR(predAltMSL, POLE_ALT_MSL_FT, TIGHT_TOL);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Test 2: PredictPosition at South Pole — same ternary FALSE branch
+// ─────────────────────────────────────────────────────────────────────────────
+
+// MC/DC: PredictPosition ternary — metersPerDegLon <= 0.0 (FALSE branch)
+// At lat=-90.01, cos(-90.01deg) < 0, so metersPerDegLon < 0, forcing the
+// ternary FALSE branch and returning deltaLon = 0.0.
+// Verifies REQ-SF-0402
+TEST_F(CFITDalA_MCDC, PredictPosition_SouthPole_LonDisplacementZero)
+{
+    AircraftState state{};
+    state.latitude           = POLE_LAT_SOUTH_PAST;  // -90.01 deg => cos < 0
+    state.longitude          = POLE_LON_START;
+    state.altitudeMSL        = POLE_ALT_MSL_FT;
+    state.altitudeAGL        = POLE_ALT_MSL_FT;
+    state.groundSpeedKts     = POLE_SPEED_KTS;
+    state.trackAngleDeg      = TRACK_EAST;       // eastward – maximises lon component
+    state.flightPathAngleDeg = FPA_LEVEL;
+    state.verticalSpeedFPM   = 0.0;
+
+    double predLat   = 0.0;
+    double predLon   = 0.0;
+    double predAltMSL = 0.0;
+    TerrainCollisionDetector::PredictPosition(state, POLE_PREDICT_TIME_SEC,
+                                              predLat, predLon, predAltMSL);
+
+    // Longitude must remain unchanged: the ternary returns 0.0 for deltaLon
+    EXPECT_NEAR(predLon, POLE_LON_START, LON_DISPLACEMENT_TOL);
+
+    // Latitude may change; verify it is finite
+    EXPECT_FALSE(std::isnan(predLat));
+
+    // Altitude should remain unchanged for level flight
+    EXPECT_NEAR(predAltMSL, POLE_ALT_MSL_FT, TIGHT_TOL);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Test 3: Evaluate at North Pole — integration test for CFIT at polar latitude
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Integration: Evaluate at polar latitude ensures no NaN/Inf and no longitude drift
+// Verifies REQ-SF-0402, REQ-SF-1400
+TEST_F(CFITDalA_Robustness, Evaluate_NorthPole_NoLonDrift)
+{
+    // Create a flat terrain grid centred at the North Pole
+    TerrainGrid polarGrid(POLE_GRID_DIM, POLE_GRID_DIM, POLE_GRID_POSTING_M,
+                          POLE_LAT_NORTH, POLE_LON_START);
+    polarGrid.FillFlat(POLE_ELEV_FLAT_M);
+
+    TerrainCollisionDetector det(polarGrid);
+
+    AircraftState state{};
+    state.latitude           = POLE_LAT_NORTH;
+    state.longitude          = POLE_LON_START;
+    state.altitudeMSL        = POLE_ALT_MSL_FT;
+    state.altitudeAGL        = POLE_ALT_MSL_FT;
+    state.groundSpeedKts     = POLE_SPEED_KTS;
+    state.trackAngleDeg      = TRACK_NORTH;
+    state.flightPathAngleDeg = FPA_LEVEL;
+    state.verticalSpeedFPM   = 0.0;
+
+    CFITResult result = det.Evaluate(state);
+
+    // At 20 000 ft over sea-level terrain the alert should be eNone
+    EXPECT_EQ(result.alertLevel, CFITAlertLevel::eNone);
+
+    // No NaN in any output field
+    EXPECT_FALSE(std::isnan(result.minimumClearanceFt));
+    EXPECT_FALSE(std::isnan(result.terrainElevationFt));
+    EXPECT_FALSE(std::isnan(result.timeToImpactSec));
+    EXPECT_FALSE(std::isnan(result.closestLat));
+    EXPECT_FALSE(std::isnan(result.closestLon));
+
+    // Longitude of closest point should not have drifted from starting lon
+    EXPECT_NEAR(result.closestLon, POLE_LON_START, LON_DISPLACEMENT_TOL);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Test 4: GetElevationBatch with count=0 — loop FALSE-path MC/DC
+// ─────────────────────────────────────────────────────────────────────────────
+
+// MC/DC: GetElevationBatch loop decision — count=0, loop body never executes
+// Verifies REQ-SF-0406
+TEST_F(TerrainGridDalA_MCDC, BatchQuery_EmptyInput_LoopFalseBranch)
+{
+    grid.FillFlat(ELEV_FLAT);
+
+    // Sentinel value to prove the output array is NOT written to
+    static constexpr double SENTINEL_VALUE = -99999.0;
+    double elevOut = SENTINEL_VALUE;
+
+    // count = 0: the loop body must never execute
+    grid.GetElevationBatch(nullptr, nullptr, &elevOut, 0);
+
+    // The output sentinel must be untouched (loop body never ran)
+    EXPECT_NEAR(elevOut, SENTINEL_VALUE, TIGHT_TOL);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Test 5: Multiple impact points — !impactDetected guard decision MC/DC
+// ─────────────────────────────────────────────────────────────────────────────
+
+// MC/DC: !impactDetected decision — first impact sets flag, subsequent impacts skip
+// The terrain is at 1500 m (~4921 ft). An aircraft at low altitude descending
+// will hit terrain early; the detector continues scanning but must not overwrite
+// the first impact time.
+// Verifies REQ-SF-0402
+TEST_F(CFITDalA_MCDC, Evaluate_MultipleImpactPoints_OnlyFirstRecorded)
+{
+    // Terrain at 1500 m = ~4921 ft MSL. Put aircraft barely above terrain,
+    // descending steeply so it crosses terrain at an early step and remains
+    // below terrain for many subsequent steps.
+    static constexpr double BARELY_ABOVE_TERRAIN_FT = 4925.0;
+
+    TerrainCollisionDetector det(terrain);
+    CFITConfig cfg;
+    cfg.lookaheadTimeSec     = LOOKAHEAD_DEFAULT_SEC;
+    cfg.stepTimeSec          = 1.0;
+    cfg.clearanceThresholdFt = CLEARANCE_DEFAULT_FT;
+    cfg.cautionMultiplier    = CAUTION_MULTIPLIER;
+    cfg.maxSteps             = 120;
+    det.SetConfig(cfg);
+
+    double lat = LatForRow(5.0);
+    double lon = LonForCol(5.0);
+    AircraftState state = MakeState(lat, lon, BARELY_ABOVE_TERRAIN_FT,
+                                    POLE_SPEED_KTS, TRACK_NORTH,
+                                    DESCENDING_INTO_TERRAIN_FPA);
+
+    CFITResult result = det.Evaluate(state);
+
+    // Must be a WARNING (terrain intersection detected)
+    EXPECT_EQ(result.alertLevel, CFITAlertLevel::eWarning);
+
+    // timeToImpact must be the FIRST intersection, not a later one
+    EXPECT_GE(result.timeToImpactSec, 0.0);
+
+    // The first impact should happen very early (within a few seconds) because
+    // the aircraft is only ~4 ft above terrain and descending at -6 deg
+    static constexpr double MAX_EXPECTED_FIRST_IMPACT_SEC = 5.0;
+    EXPECT_LE(result.timeToImpactSec, MAX_EXPECTED_FIRST_IMPACT_SEC);
+
+    // Run a second evaluation with a longer lookahead to ensure the first impact
+    // time is stable (not overwritten by later impacts)
+    CFITConfig cfgLong = cfg;
+    cfgLong.lookaheadTimeSec = 120.0;
+    cfgLong.maxSteps         = 240;
+    det.SetConfig(cfgLong);
+
+    CFITResult resultLong = det.Evaluate(state);
+    EXPECT_EQ(resultLong.alertLevel, CFITAlertLevel::eWarning);
+
+    // The first impact time must be the same regardless of lookahead length
+    EXPECT_NEAR(resultLong.timeToImpactSec, result.timeToImpactSec, TIGHT_TOL);
+}

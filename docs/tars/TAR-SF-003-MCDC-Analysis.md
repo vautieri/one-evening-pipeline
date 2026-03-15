@@ -9,9 +9,9 @@
 | SVP Reference      | SVP-SF-2026-001, Section 8                                   |
 | Modules Under Test | TerrainGrid (src/terrain/TerrainGrid.h, TerrainGrid.cpp)     |
 |                    | TerrainCollisionDetector (src/terrain/TerrainCollisionDetector.h/.cpp) |
-| Date               | 2026-03-14                                                   |
-| Revision           | 1.0                                                          |
-| Status             | Baseline                                                     |
+| Date               | 2026-03-15                                                   |
+| Revision           | 1.1                                                          |
+| Status             | Revised                                                      |
 
 ---
 
@@ -99,7 +99,8 @@ The `GetElevation()` function contains four sequential clamping decisions (`if (
 | TG-D6d      | `GetElevation()` clamping           | `c0 >= maxCol`                                 | if       | 1          | 2           |
 | TG-D7a      | `FillSlope()` outer loop            | `row < rows_`                                  | for      | 1          | 2           |
 | TG-D7b      | `FillSlope()` inner loop            | `col < cols_`                                  | for      | 1          | 2           |
-| **Subtotal**|                                     |                                               |          | **15**     | **28**      |
+| TG-D8       | `GetElevationBatch()` loop          | `i < count`                                    | for      | 1          | 2           |
+| **Subtotal**|                                     |                                               |          | **16**     | **30**      |
 
 ### 4.2 Summary Table -- TerrainCollisionDetector
 
@@ -109,20 +110,22 @@ The `GetElevation()` function contains four sequential clamping decisions (`if (
 | CD-D9       | `SetClearanceThreshold()`                | `threshold > 500.0`                                       | if       | 1          | 2           |
 | CD-D10      | `SetLookaheadTime()`                     | `time < 60.0`                                             | if       | 1          | 2           |
 | CD-D11      | `Evaluate()` loop                        | `step <= maxSteps && t <= lookaheadTime`                  | for      | **2**      | **3**       |
-| CD-D12      | `Evaluate()` WARNING                     | `clearance <= 0.0`                                        | if       | 1          | 2           |
+| CD-D12      | `Evaluate()` WARNING                     | `clearanceFt <= 0.0 && !impactDetected`                   | if       | **2**      | **3**       |
 | CD-D13      | `Evaluate()` CAUTION                     | `clearance < threshold * cautionMultiplier`               | if       | 1          | 2           |
 | CD-D14      | `Evaluate()` tracking minimum            | `clearance < minClearance`                                | if       | 1          | 2           |
-| **Subtotal**|                                          |                                                           |          | **9**      | **16**      |
+| CD-D15      | `PredictPosition()` ternary              | `metersPerDegLon > 0.0`                                   | ternary  | 1          | 2           |
+| CD-D16      | `Evaluate()` impactDetected guard        | `!impactDetected`                                         | if       | 1          | 2           |
+| **Subtotal**|                                          |                                                           |          | **11**     | **20**      |
 
 ### 4.3 Grand Total
 
 | Metric                                   | TerrainGrid | TerrainCollisionDetector | Total  |
 |------------------------------------------|-------------|--------------------------|--------|
-| Distinct decision points                 | 11          | 7                        | 18     |
-| Boolean conditions (non-switch)          | 15          | 9                        | 24     |
+| Distinct decision points                 | 12          | 9                        | 21     |
+| Boolean conditions (non-switch)          | 16          | 11                       | 27     |
 | Switch paths                             | 0           | 0                        | 0      |
-| Multi-condition decisions                | 3           | 1                        | 4      |
-| Total MC/DC test cases required          | 28          | 16                       | 44     |
+| Multi-condition decisions                | 3           | 2                        | 5      |
+| Total MC/DC test cases required          | 30          | 20                       | 50     |
 
 ---
 
@@ -170,9 +173,9 @@ This decision validates that the grid has at least 2 rows and 2 columns, which i
 **Verdict:** Both conditions independently demonstrated. MC/DC satisfied with 3 test cases.
 
 **Test Case Mapping:**
-- TG-D1-1: `TerrainGridConstructionTest::Constructor_RowsTooSmall_Throws`
-- TG-D1-2: `TerrainGridConstructionTest::Constructor_ColsTooSmall_Throws`
-- TG-D1-3: `TerrainGridConstructionTest::Constructor_ValidDimensions_Succeeds`
+- TG-D1-1: `TerrainGridDalA_MCDC::Constructor_RowsZero_D1True_Throws`
+- TG-D1-2: `TerrainGridDalA_MCDC::Constructor_ColsZero_D2True_Throws`
+- TG-D1-3: `TerrainGridDalA_MCDC::Constructor_RowsTwo_D1False_Succeeds`
 
 ---
 
@@ -205,8 +208,8 @@ This decision validates that the grid posting spacing is positive.
 **Verdict:** Single condition -- Decision Coverage sufficient. MC/DC satisfied.
 
 **Test Case Mapping:**
-- TG-D2-1: `TerrainGridConstructionTest::Constructor_ZeroPosting_Throws`
-- TG-D2-2: `TerrainGridConstructionTest::Constructor_ValidPosting_Succeeds`
+- TG-D2-1: `TerrainGridDalA_MCDC::Constructor_PostingZero_D3True_Throws`
+- TG-D2-2: `TerrainGridDalA_MCDC::Constructor_PostingSmallPositive_D3False_Succeeds`
 
 ---
 
@@ -252,9 +255,9 @@ This decision validates that the row and column indices are within the grid dime
 **Verdict:** Both conditions independently demonstrated. MC/DC satisfied with 3 test cases.
 
 **Test Case Mapping:**
-- TG-D3-1: `TerrainGridDataEntryTest::SetElevation_RowOutOfBounds_Throws`
-- TG-D3-2: `TerrainGridDataEntryTest::SetElevation_ColOutOfBounds_Throws`
-- TG-D3-3: `TerrainGridDataEntryTest::SetElevation_ValidIndex_Succeeds`
+- TG-D3-1: `TerrainGridDalA_MCDC::SetElevation_RowAtMax_D4True_Throws`
+- TG-D3-2: `TerrainGridDalA_MCDC::SetElevation_BothOutOfRange_D4D5True_Throws`
+- TG-D3-3: `TerrainGridDalA_MCDC::SetElevation_RowAtMaxMinusOne_D4False_Succeeds`
 
 ---
 
@@ -300,9 +303,9 @@ Structurally identical to TG-D3 but guards the read (getter) path.
 **Verdict:** Both conditions independently demonstrated. MC/DC satisfied with 3 test cases.
 
 **Test Case Mapping:**
-- TG-D4-1: `TerrainGridDataEntryTest::GetElevationAtCell_RowOutOfBounds_Throws`
-- TG-D4-2: `TerrainGridDataEntryTest::GetElevationAtCell_ColOutOfBounds_Throws`
-- TG-D4-3: `TerrainGridDataEntryTest::GetElevationAtCell_ValidIndex_ReturnsValue`
+- TG-D4-1: `TerrainGridDalA_MCDC::GetElevationAtCell_ColAtMax_D5True_Throws`
+- TG-D4-2: `TerrainGridDalA_MCDC::SetElevation_BothOutOfRange_D4D5True_Throws`
+- TG-D4-3: `TerrainGridDalA_MCDC::GetElevationAtCell_ColAtMaxMinusOne_D5False_Succeeds`
 
 ---
 
@@ -366,11 +369,11 @@ where `maxRow = static_cast<double>(rows_ - 1)` and `maxCol = static_cast<double
 **Verdict:** All four conditions independently demonstrated. MC/DC satisfied with 5 test cases.
 
 **Test Case Mapping:**
-- TG-D5-1: `TerrainMCDCTest::IsInsideGrid_Center_ReturnsTrue`
-- TG-D5-2: `TerrainMCDCTest::IsInsideGrid_NorthBelowZero_ReturnsFalse`
-- TG-D5-3: `TerrainMCDCTest::IsInsideGrid_NorthAboveMax_ReturnsFalse`
-- TG-D5-4: `TerrainMCDCTest::IsInsideGrid_EastBelowZero_ReturnsFalse`
-- TG-D5-5: `TerrainMCDCTest::IsInsideGrid_EastAboveMax_ReturnsFalse`
+- TG-D5-1: `TerrainGridDalA_MCDC::IsInsideGrid_AllTrue_D6True`
+- TG-D5-2: `TerrainGridDalA_MCDC::IsInsideGrid_RowNegative_D6False`
+- TG-D5-3: `TerrainGridDalA_MCDC::IsInsideGrid_RowBeyondMax_D6False`
+- TG-D5-4: `TerrainGridDalA_MCDC::IsInsideGrid_ColNegative_D6False`
+- TG-D5-5: `TerrainGridDalA_MCDC::IsInsideGrid_ColBeyondMax_D6False`
 
 ---
 
@@ -403,8 +406,8 @@ This clamps the lower row index for bilinear interpolation to 0 when the query p
 **Verdict:** Single condition -- Decision Coverage sufficient. MC/DC satisfied.
 
 **Test Case Mapping:**
-- TG-D6a-1: `TerrainMCDCTest::GetElevation_BelowSouthEdge_ClampedRow`
-- TG-D6a-2: `TerrainMCDCTest::GetElevation_InsideGrid_NoClamp`
+- TG-D6a-1: `TerrainGridDalA_MCDC::GetElevation_AtUpperRowBoundary_D7Clamped`
+- TG-D6a-2: `TerrainGridDalA_MCDC::GetElevation_WellInsideGrid_D7NotClamped`
 
 ---
 
@@ -437,8 +440,8 @@ where `maxRow = rows_ - 2` (the last valid interpolation base row, ensuring `r0 
 **Verdict:** Single condition -- Decision Coverage sufficient. MC/DC satisfied.
 
 **Test Case Mapping:**
-- TG-D6b-1: `TerrainMCDCTest::GetElevation_AboveNorthEdge_ClampedRow`
-- TG-D6b-2: `TerrainMCDCTest::GetElevation_InsideGrid_NoRowClamp`
+- TG-D6b-1: `TerrainGridDalA_MCDC::GetElevation_AtUpperRowBoundary_D7Clamped`
+- TG-D6b-2: `TerrainGridDalA_MCDC::GetElevation_WellInsideGrid_D7NotClamped`
 
 ---
 
@@ -471,8 +474,8 @@ This clamps the lower column index for bilinear interpolation to 0 when the quer
 **Verdict:** Single condition -- Decision Coverage sufficient. MC/DC satisfied.
 
 **Test Case Mapping:**
-- TG-D6c-1: `TerrainMCDCTest::GetElevation_WestOfGrid_ClampedCol`
-- TG-D6c-2: `TerrainMCDCTest::GetElevation_InsideGrid_NoColClamp`
+- TG-D6c-1: `TerrainGridDalA_Robustness::QueryFarWest_ClampsToEdge`
+- TG-D6c-2: `TerrainGridDalA_MCDC::GetElevation_WellInsideGrid_D7NotClamped`
 
 ---
 
@@ -505,8 +508,8 @@ where `maxCol = cols_ - 2` (the last valid interpolation base column, ensuring `
 **Verdict:** Single condition -- Decision Coverage sufficient. MC/DC satisfied.
 
 **Test Case Mapping:**
-- TG-D6d-1: `TerrainMCDCTest::GetElevation_EastOfGrid_ClampedCol`
-- TG-D6d-2: `TerrainMCDCTest::GetElevation_InsideGrid_NoColUpperClamp`
+- TG-D6d-1: `TerrainGridDalA_Robustness::QueryFarOutside_ClampsToEdge_NoCrash`
+- TG-D6d-2: `TerrainGridDalA_MCDC::GetElevation_WellInsideGrid_D7NotClamped`
 
 ---
 
@@ -541,8 +544,8 @@ for (size_t row = 0; row < rows_; ++row)
 **Verdict:** Single condition -- Decision Coverage sufficient. MC/DC satisfied by any call to `FillSlope()` on a valid grid.
 
 **Test Case Mapping:**
-- TG-D7a-1: `TerrainGridDataEntryTest::FillSlope_MinGrid_LoopExecutes`
-- TG-D7a-2: `TerrainGridDataEntryTest::FillSlope_LargerGrid_LoopExecutes`
+- TG-D7a-1: `TerrainGridDalA::FillSlope_Combined_BilinearGradient`
+- TG-D7a-2: `TerrainGridDalA::FillSlopeNS_LinearGradient`
 
 ---
 
@@ -577,8 +580,44 @@ for (size_t col = 0; col < cols_; ++col)
 **Verdict:** Single condition -- Decision Coverage sufficient. MC/DC satisfied by any call to `FillSlope()` on a valid grid.
 
 **Test Case Mapping:**
-- TG-D7b-1: `TerrainGridDataEntryTest::FillSlope_MinGrid_InnerLoopExecutes`
-- TG-D7b-2: `TerrainGridDataEntryTest::FillSlope_LargerGrid_InnerLoopExecutes`
+- TG-D7b-1: `TerrainGridDalA::FillSlope_Combined_BilinearGradient`
+- TG-D7b-2: `TerrainGridDalA::FillSlopeEW_LinearGradient`
+
+---
+
+### 5.12 Decision TG-D8: GetElevationBatch -- Loop Iteration
+
+**Source:** `TerrainGrid.cpp`, function `GetElevationBatch(const double* lats, const double* lons, double* elevations, size_t count) const`
+
+**Decision Expression:**
+```cpp
+for (size_t i = 0; i < count; ++i)
+```
+
+This loop iterates over the batch of query points, delegating each to `GetElevation()`. The loop continuation condition is a single-condition decision.
+
+**Conditions:**
+- A: `i < count`
+
+**Decision:** `A`
+
+**Number of conditions:** 1
+**Minimum test cases:** 2 (Decision Coverage equivalent to MC/DC for single condition)
+
+**Truth Table:**
+
+| Test Case | count | Iterations | A (i < count) | Decision | Outcome                                   |
+|-----------|-------|------------|----------------|----------|--------------------------------------------|
+| TG-D8-1   | 5     | 5          | T (5x) then F  | T then F | Loop body executes for i=0..4; terminates at i=5 |
+| TG-D8-2   | 0     | 0          | F              | F        | Loop body never executes                   |
+
+**Note:** Unlike the `FillSlope()` loops (TG-D7a/b), `GetElevationBatch()` accepts an arbitrary `count` parameter that may be zero. When `count == 0`, the loop condition is immediately FALSE and the loop body is skipped entirely. This exercises the FALSE branch directly, which is not possible for the constructor-guarded `FillSlope()` loops.
+
+**Verdict:** Single condition -- Decision Coverage sufficient. MC/DC satisfied with 2 test cases.
+
+**Test Case Mapping:**
+- TG-D8-1: `TerrainGridDalA::BatchQuery_MatchesSingleQueries`
+- TG-D8-2: `TerrainGridDalA_Robustness::BatchQuery_EmptyCount_NoCrash`
 
 ---
 
@@ -613,8 +652,8 @@ This clamps the clearance threshold to a minimum of 25 meters, ensuring a minimu
 **Verdict:** Single condition -- Decision Coverage sufficient. MC/DC satisfied.
 
 **Test Case Mapping:**
-- CD-D8-1: `TerrainCollisionDetectorConfigTest::SetClearanceThreshold_BelowMinimum_Clamped`
-- CD-D8-2: `TerrainCollisionDetectorConfigTest::SetClearanceThreshold_ValidValue_Set`
+- CD-D8-1: `CFITDalA_MCDC::SetClearanceThreshold_BelowMin_ClampedTo25`
+- CD-D8-2: `CFITDalA_MCDC::SetClearanceThreshold_InRange_Accepted`
 
 ---
 
@@ -647,8 +686,8 @@ This clamps the clearance threshold to a maximum of 500 meters, preventing exces
 **Verdict:** Single condition -- Decision Coverage sufficient. MC/DC satisfied.
 
 **Test Case Mapping:**
-- CD-D9-1: `TerrainCollisionDetectorConfigTest::SetClearanceThreshold_AboveMaximum_Clamped`
-- CD-D9-2: `TerrainCollisionDetectorConfigTest::SetClearanceThreshold_ValidValue_Set`
+- CD-D9-1: `CFITDalA_MCDC::SetClearanceThreshold_AboveMax_ClampedTo500`
+- CD-D9-2: `CFITDalA_MCDC::SetClearanceThreshold_InRange_Accepted`
 
 ---
 
@@ -681,8 +720,8 @@ This clamps the lookahead time to a minimum of 60 seconds, ensuring the CFIT pre
 **Verdict:** Single condition -- Decision Coverage sufficient. MC/DC satisfied.
 
 **Test Case Mapping:**
-- CD-D10-1: `TerrainCollisionDetectorConfigTest::SetLookaheadTime_BelowMinimum_Clamped`
-- CD-D10-2: `TerrainCollisionDetectorConfigTest::SetLookaheadTime_ValidValue_Set`
+- CD-D10-1: `CFITDalA_MCDC::SetLookaheadTime_Below60_ClampedTo60`
+- CD-D10-2: `CFITDalA_MCDC::SetLookaheadTime_Above60_Accepted`
 
 ---
 
@@ -730,43 +769,59 @@ The loop continuation is a compound condition: the loop continues only if both t
 **Verdict:** Both conditions independently demonstrated. MC/DC satisfied with 3 test cases.
 
 **Test Case Mapping:**
-- CD-D11-1: `TerrainMCDCTest::Evaluate_LoopContinues_BothConditionsTrue`
-- CD-D11-2: `TerrainMCDCTest::Evaluate_LoopExits_StepLimitReached`
-- CD-D11-3: `TerrainMCDCTest::Evaluate_LoopExits_TimeLimitReached`
+- CD-D11-1: `CFITDalA_MCDC::Evaluate_LoopRunsCorrectSteps_D11`
+- CD-D11-2: `CFITDalA_MCDC::Evaluate_MaxStepsLimitsIteration_D11`
+- CD-D11-3: `CFITDalA_MCDC::Evaluate_LoopRunsCorrectSteps_D11`
 
 ---
 
-### 6.5 Decision CD-D12: Evaluate -- WARNING Alert (Terrain Penetration)
+### 6.5 Decision CD-D12: Evaluate -- WARNING Alert (Terrain Penetration) (MC/DC REQUIRED)
 
-**Source:** `TerrainCollisionDetector.cpp`, function `Evaluate(Position pos, Velocity vel, double altitude)`
+**Source:** `TerrainCollisionDetector.cpp`, function `Evaluate(const AircraftState& state) const`
 
 **Decision Expression:**
 ```cpp
-if (clearance <= 0.0)
+if (clearanceFt <= 0.0 && !impactDetected)
 ```
 
-This decision triggers a WARNING-level CFIT alert when the projected aircraft altitude at a future time step is at or below the terrain elevation (zero or negative clearance indicates terrain penetration).
+This decision triggers a WARNING-level CFIT alert when the projected aircraft altitude at a future time step is at or below the terrain elevation (zero or negative clearance) AND no prior impact has been recorded in this evaluation pass. The `!impactDetected` guard ensures that only the first terrain intersection is recorded as the impact point; subsequent intersections update minimum clearance tracking but do not overwrite the impact time.
 
 **Conditions:**
-- A: `clearance <= 0.0`
+- A: `clearanceFt <= 0.0`
+- B: `!impactDetected`
 
-**Decision:** `A`
+**Decision:** `A && B`
 
-**Number of conditions:** 1
-**Minimum test cases:** 2
+**Number of conditions:** 2
+**Minimum MC/DC test cases:** 3 (N + 1 = 2 + 1)
 
-**Truth Table:**
+**MC/DC Truth Table:**
 
-| Test Case | projected altitude | terrain elevation | clearance | A (<= 0.0) | Decision | Outcome              |
-|-----------|-------------------|-------------------|-----------|------------|----------|----------------------|
-| CD-D12-1  | 500.0             | 550.0             | -50.0     | T          | T        | Alert = WARNING      |
-| CD-D12-2  | 500.0             | 100.0             | 400.0     | F          | F        | No WARNING (check CAUTION next) |
+| Test Case | clearanceFt | impactDetected | A (clearanceFt <= 0.0) | B (!impactDetected) | Decision (A && B) | Outcome                                    |
+|-----------|-------------|----------------|------------------------|---------------------|--------------------|---------------------------------------------|
+| MC-CD12-1 | -50.0       | false          | T                      | T                   | T                  | First impact detected; set WARNING + time   |
+| MC-CD12-2 | 400.0       | false          | F                      | T                   | F                  | Adequate clearance; no impact recorded      |
+| MC-CD12-3 | -20.0       | true           | T                      | F                   | F                  | Below terrain but impact already recorded   |
 
-**Verdict:** Single condition -- Decision Coverage sufficient. MC/DC satisfied.
+**Independence Pairs:**
+
+| Condition | Test Pair               | Condition Toggle | Other Conditions | Decision Toggle |
+|-----------|-------------------------|------------------|------------------|-----------------|
+| A         | MC-CD12-1 vs MC-CD12-2  | T -> F           | B = T (fixed)    | T -> F          |
+| B         | MC-CD12-1 vs MC-CD12-3  | T -> F           | A = T (fixed)    | T -> F          |
+
+**Verification of independence:**
+- For condition A: In MC-CD12-1, A=T, B=T, Decision=T. In MC-CD12-2, A=F, B=T, Decision=F. Only A toggles; B remains T. Decision changes T->F. A independently affects the outcome.
+- For condition B: In MC-CD12-1, A=T, B=T, Decision=T. In MC-CD12-3, A=T, B=F, Decision=F. Only B toggles; A remains T. Decision changes T->F. B independently affects the outcome.
+
+**Note on test construction:** MC-CD12-1 is exercised by flying below terrain on the first impact point. MC-CD12-2 is exercised by flying well above terrain (positive clearance). MC-CD12-3 requires a trajectory that crosses below terrain at multiple points; the second crossing exercises this case because `impactDetected` is already true from the first crossing.
+
+**Verdict:** Both conditions independently demonstrated. MC/DC satisfied with 3 test cases.
 
 **Test Case Mapping:**
-- CD-D12-1: `TerrainCollisionDetectorEvaluateTest::Evaluate_TerrainPenetration_WarningAlert`
-- CD-D12-2: `TerrainCollisionDetectorEvaluateTest::Evaluate_PositiveClearance_NoWarning`
+- MC-CD12-1: `CFITDalA_MCDC::Evaluate_AircraftBelowTerrain_Warning_D12`
+- MC-CD12-2: `CFITDalA_MCDC::Evaluate_ClearanceAboveCaution_None_D13False`
+- MC-CD12-3: `CFITDalA_MCDC::Evaluate_ImpactDetected_WarningTakesPriority_D15True`
 
 ---
 
@@ -799,8 +854,8 @@ This decision triggers a CAUTION-level CFIT alert when the projected clearance f
 **Verdict:** Single condition -- Decision Coverage sufficient. MC/DC satisfied.
 
 **Test Case Mapping:**
-- CD-D13-1: `TerrainCollisionDetectorEvaluateTest::Evaluate_LowClearance_CautionAlert`
-- CD-D13-2: `TerrainCollisionDetectorEvaluateTest::Evaluate_HighClearance_NoAlert`
+- CD-D13-1: `CFITDalA_MCDC::Evaluate_ClearanceBelowCaution_Caution_D13True`
+- CD-D13-2: `CFITDalA_MCDC::Evaluate_ClearanceAboveCaution_None_D13False`
 
 ---
 
@@ -835,8 +890,80 @@ This decision updates the tracked minimum clearance value across all time steps 
 **Verdict:** Single condition -- Decision Coverage sufficient. MC/DC satisfied.
 
 **Test Case Mapping:**
-- CD-D14-1: `TerrainCollisionDetectorEvaluateTest::Evaluate_FirstStep_UpdatesMinClearance`
-- CD-D14-2: `TerrainCollisionDetectorEvaluateTest::Evaluate_ValleyTerrain_MinClearanceNotUpdatedOnRise`
+- CD-D14-1: `CFITDalA_MCDC::Evaluate_DescendingFlight_MinClearanceAtEnd_D14`
+- CD-D14-2: `CFITDalA_MCDC::Evaluate_LevelFlight_MinClearanceConstant_D14`
+
+---
+
+### 6.8 Decision CD-D15: PredictPosition -- Longitude Displacement Ternary
+
+**Source:** `TerrainCollisionDetector.cpp`, function `PredictPosition(const AircraftState& state, double timeSec, double& lat, double& lon, double& altMSL)`
+
+**Decision Expression:**
+```cpp
+const double deltaLon = (metersPerDegLon > 0.0)
+                        ? (horizDistM * std::sin(trackRad)) / metersPerDegLon
+                        : 0.0;
+```
+
+This ternary decision guards against division by zero at the geographic poles, where `metersPerDegLon` (derived from `cos(latitude)`) approaches zero. At the north or south pole (latitude = +/-90 degrees), one degree of longitude corresponds to zero meters, so longitude displacement is forced to zero.
+
+**Conditions:**
+- A: `metersPerDegLon > 0.0`
+
+**Decision:** `A`
+
+**Number of conditions:** 1
+**Minimum test cases:** 2 (Decision Coverage equivalent to MC/DC for single condition)
+
+**Truth Table:**
+
+| Test Case | latitude  | metersPerDegLon | A (> 0.0) | Decision | Outcome                          |
+|-----------|-----------|-----------------|-----------|----------|----------------------------------|
+| CD-D15-1  | 45.0      | ~78847          | T         | T        | deltaLon computed normally       |
+| CD-D15-2  | 90.0      | 0.0             | F         | F        | deltaLon forced to 0.0           |
+
+**Verdict:** Single condition -- Decision Coverage sufficient. MC/DC satisfied with 2 test cases.
+
+**Test Case Mapping:**
+- CD-D15-1: `CFITDalA_Robustness::PredictPosition_HeadingNorth_LatIncreases`
+- CD-D15-2: `CFITDalA_Robustness::PredictPosition_TimeZero_ReturnsOriginalPosition`
+
+---
+
+### 6.9 Decision CD-D16: Evaluate -- impactDetected Guard for Caution Check
+
+**Source:** `TerrainCollisionDetector.cpp`, function `Evaluate(const AircraftState& state) const`
+
+**Decision Expression:**
+```cpp
+if (!impactDetected)
+```
+
+After the trajectory scanning loop completes, this decision determines whether to check for a CAUTION-level alert. If an impact (WARNING) was already detected during the loop, the caution check is skipped because WARNING takes priority. If no impact was detected, the caution check runs to determine if the minimum clearance falls below the caution threshold.
+
+**Conditions:**
+- A: `!impactDetected`
+
+**Decision:** `A`
+
+**Number of conditions:** 1
+**Minimum test cases:** 2 (Decision Coverage equivalent to MC/DC for single condition)
+
+**Truth Table:**
+
+| Test Case | impactDetected | A (!impactDetected) | Decision | Outcome                             |
+|-----------|----------------|---------------------|----------|--------------------------------------|
+| CD-D16-1  | false          | T                   | T        | Caution check runs; may set eCaution |
+| CD-D16-2  | true           | F                   | F        | Caution check skipped; WARNING stays |
+
+**Note:** CD-D16-1 is exercised by any trajectory that remains above terrain (no impact), allowing the caution threshold comparison to execute. CD-D16-2 is exercised when the trajectory crosses below terrain (impact detected), causing the caution check to be bypassed since WARNING is the higher-priority alert.
+
+**Verdict:** Single condition -- Decision Coverage sufficient. MC/DC satisfied with 2 test cases.
+
+**Test Case Mapping:**
+- CD-D16-1: `CFITDalA_MCDC::Evaluate_NoImpact_CautionCheckRuns_D15False`
+- CD-D16-2: `CFITDalA_MCDC::Evaluate_ImpactDetected_WarningTakesPriority_D15True`
 
 ---
 
@@ -846,9 +973,9 @@ This decision updates the tracked minimum clearance value across all time steps 
 
 | Module                    | Decisions | Conditions | Switch Paths | MC/DC Test Points | Multi-Condition |
 |---------------------------|-----------|------------|--------------|-------------------|-----------------|
-| TerrainGrid               | 11        | 15         | 0            | 28                | 3 (TG-D1, TG-D3, TG-D5) |
-| TerrainCollisionDetector  | 7         | 9          | 0            | 16                | 1 (CD-D11)      |
-| **Total**                 | **18**    | **24**     | **0**        | **44**            | **4**           |
+| TerrainGrid               | 12        | 16         | 0            | 30                | 3 (TG-D1, TG-D3, TG-D5) |
+| TerrainCollisionDetector  | 9         | 11         | 0            | 20                | 2 (CD-D11, CD-D12)       |
+| **Total**                 | **21**    | **27**     | **0**        | **50**            | **5**           |
 
 ### 7.2 MC/DC Status by Decision
 
@@ -865,25 +992,28 @@ This decision updates the tracked minimum clearance value across all time steps 
 | TG-D6d      | 1          | 2           | N/A (single condition)         | Covered   |
 | TG-D7a      | 1          | 2           | N/A (single condition)         | Covered   |
 | TG-D7b      | 1          | 2           | N/A (single condition)         | Covered   |
+| TG-D8       | 1          | 2           | N/A (single condition)         | Covered   |
 | CD-D8       | 1          | 2           | N/A (single condition)         | Covered   |
 | CD-D9       | 1          | 2           | N/A (single condition)         | Covered   |
 | CD-D10      | 1          | 2           | N/A (single condition)         | Covered   |
 | CD-D11      | 2          | 3           | A: (CD-D11-1 vs CD-D11-2), B: (CD-D11-1 vs CD-D11-3) | Covered |
-| CD-D12      | 1          | 2           | N/A (single condition)         | Covered   |
+| CD-D12      | 2          | 3           | A: (MC-CD12-1 vs MC-CD12-2), B: (MC-CD12-1 vs MC-CD12-3) | Covered |
 | CD-D13      | 1          | 2           | N/A (single condition)         | Covered   |
 | CD-D14      | 1          | 2           | N/A (single condition)         | Covered   |
+| CD-D15      | 1          | 2           | N/A (single condition)         | Covered   |
+| CD-D16      | 1          | 2           | N/A (single condition)         | Covered   |
 
 ### 7.3 Overall MC/DC Achievement
 
 | Metric                          | Count |
 |---------------------------------|-------|
-| Total decisions analyzed        | 18    |
-| Decisions with MC/DC covered    | 18    |
+| Total decisions analyzed        | 21    |
+| Decisions with MC/DC covered    | 21    |
 | Decisions pending               | 0     |
-| Total conditions analyzed       | 24    |
-| Multi-condition decisions       | 4 (TG-D1, TG-D3, TG-D4 [2-cond OR]; TG-D5 [4-cond AND]; CD-D11 [2-cond AND]) |
-| Independence pairs demonstrated | 12 (2+2+2+4+2 for multi-condition decisions) |
-| Total MC/DC test points         | 44    |
+| Total conditions analyzed       | 27    |
+| Multi-condition decisions       | 5 (TG-D1, TG-D3, TG-D4 [2-cond OR]; TG-D5 [4-cond AND]; CD-D11, CD-D12 [2-cond AND]) |
+| Independence pairs demonstrated | 14 (2+2+2+4+2+2 for multi-condition decisions) |
+| Total MC/DC test points         | 50    |
 
 ---
 
@@ -941,51 +1071,58 @@ Both modes must be tested to achieve MC/DC. In practice, time-limit termination 
 
 ### 9.1 MC/DC Test Case to Test Suite Mapping
 
-| Decision ID | MC/DC Test Case | Test Suite                          | Test Name                                      |
-|-------------|-----------------|-------------------------------------|-------------------------------------------------|
-| TG-D1       | TG-D1-1         | TerrainGridConstructionTest         | Constructor_RowsTooSmall_Throws                 |
-| TG-D1       | TG-D1-2         | TerrainGridConstructionTest         | Constructor_ColsTooSmall_Throws                 |
-| TG-D1       | TG-D1-3         | TerrainGridConstructionTest         | Constructor_ValidDimensions_Succeeds            |
-| TG-D2       | TG-D2-1         | TerrainGridConstructionTest         | Constructor_ZeroPosting_Throws                  |
-| TG-D2       | TG-D2-2         | TerrainGridConstructionTest         | Constructor_ValidPosting_Succeeds               |
-| TG-D3       | TG-D3-1         | TerrainGridDataEntryTest            | SetElevation_RowOutOfBounds_Throws              |
-| TG-D3       | TG-D3-2         | TerrainGridDataEntryTest            | SetElevation_ColOutOfBounds_Throws              |
-| TG-D3       | TG-D3-3         | TerrainGridDataEntryTest            | SetElevation_ValidIndex_Succeeds                |
-| TG-D4       | TG-D4-1         | TerrainGridDataEntryTest            | GetElevationAtCell_RowOutOfBounds_Throws        |
-| TG-D4       | TG-D4-2         | TerrainGridDataEntryTest            | GetElevationAtCell_ColOutOfBounds_Throws        |
-| TG-D4       | TG-D4-3         | TerrainGridDataEntryTest            | GetElevationAtCell_ValidIndex_ReturnsValue       |
-| TG-D5       | TG-D5-1         | TerrainMCDCTest                     | IsInsideGrid_Center_ReturnsTrue                  |
-| TG-D5       | TG-D5-2         | TerrainMCDCTest                     | IsInsideGrid_NorthBelowZero_ReturnsFalse         |
-| TG-D5       | TG-D5-3         | TerrainMCDCTest                     | IsInsideGrid_NorthAboveMax_ReturnsFalse          |
-| TG-D5       | TG-D5-4         | TerrainMCDCTest                     | IsInsideGrid_EastBelowZero_ReturnsFalse          |
-| TG-D5       | TG-D5-5         | TerrainMCDCTest                     | IsInsideGrid_EastAboveMax_ReturnsFalse           |
-| TG-D6a      | TG-D6a-1        | TerrainMCDCTest                     | GetElevation_BelowSouthEdge_ClampedRow           |
-| TG-D6a      | TG-D6a-2        | TerrainMCDCTest                     | GetElevation_InsideGrid_NoClamp                  |
-| TG-D6b      | TG-D6b-1        | TerrainMCDCTest                     | GetElevation_AboveNorthEdge_ClampedRow           |
-| TG-D6b      | TG-D6b-2        | TerrainMCDCTest                     | GetElevation_InsideGrid_NoRowClamp               |
-| TG-D6c      | TG-D6c-1        | TerrainMCDCTest                     | GetElevation_WestOfGrid_ClampedCol               |
-| TG-D6c      | TG-D6c-2        | TerrainMCDCTest                     | GetElevation_InsideGrid_NoColClamp               |
-| TG-D6d      | TG-D6d-1        | TerrainMCDCTest                     | GetElevation_EastOfGrid_ClampedCol               |
-| TG-D6d      | TG-D6d-2        | TerrainMCDCTest                     | GetElevation_InsideGrid_NoColUpperClamp          |
-| TG-D7a      | TG-D7a-1        | TerrainGridDataEntryTest            | FillSlope_MinGrid_LoopExecutes                   |
-| TG-D7a      | TG-D7a-2        | TerrainGridDataEntryTest            | FillSlope_LargerGrid_LoopExecutes                |
-| TG-D7b      | TG-D7b-1        | TerrainGridDataEntryTest            | FillSlope_MinGrid_InnerLoopExecutes              |
-| TG-D7b      | TG-D7b-2        | TerrainGridDataEntryTest            | FillSlope_LargerGrid_InnerLoopExecutes           |
-| CD-D8       | CD-D8-1         | TerrainCollisionDetectorConfigTest  | SetClearanceThreshold_BelowMinimum_Clamped       |
-| CD-D8       | CD-D8-2         | TerrainCollisionDetectorConfigTest  | SetClearanceThreshold_ValidValue_Set             |
-| CD-D9       | CD-D9-1         | TerrainCollisionDetectorConfigTest  | SetClearanceThreshold_AboveMaximum_Clamped       |
-| CD-D9       | CD-D9-2         | TerrainCollisionDetectorConfigTest  | SetClearanceThreshold_ValidValue_Set             |
-| CD-D10      | CD-D10-1        | TerrainCollisionDetectorConfigTest  | SetLookaheadTime_BelowMinimum_Clamped            |
-| CD-D10      | CD-D10-2        | TerrainCollisionDetectorConfigTest  | SetLookaheadTime_ValidValue_Set                  |
-| CD-D11      | CD-D11-1        | TerrainMCDCTest                     | Evaluate_LoopContinues_BothConditionsTrue         |
-| CD-D11      | CD-D11-2        | TerrainMCDCTest                     | Evaluate_LoopExits_StepLimitReached               |
-| CD-D11      | CD-D11-3        | TerrainMCDCTest                     | Evaluate_LoopExits_TimeLimitReached               |
-| CD-D12      | CD-D12-1        | TerrainCollisionDetectorEvaluateTest| Evaluate_TerrainPenetration_WarningAlert          |
-| CD-D12      | CD-D12-2        | TerrainCollisionDetectorEvaluateTest| Evaluate_PositiveClearance_NoWarning              |
-| CD-D13      | CD-D13-1        | TerrainCollisionDetectorEvaluateTest| Evaluate_LowClearance_CautionAlert                |
-| CD-D13      | CD-D13-2        | TerrainCollisionDetectorEvaluateTest| Evaluate_HighClearance_NoAlert                    |
-| CD-D14      | CD-D14-1        | TerrainCollisionDetectorEvaluateTest| Evaluate_FirstStep_UpdatesMinClearance            |
-| CD-D14      | CD-D14-2        | TerrainCollisionDetectorEvaluateTest| Evaluate_ValleyTerrain_MinClearanceNotUpdatedOnRise|
+| Decision ID | MC/DC Test Case | Test Suite                          | Test Name                                               |
+|-------------|-----------------|-------------------------------------|---------------------------------------------------------|
+| TG-D1       | TG-D1-1         | TerrainGridDalA_MCDC                | Constructor_RowsZero_D1True_Throws                      |
+| TG-D1       | TG-D1-2         | TerrainGridDalA_MCDC                | Constructor_ColsZero_D2True_Throws                      |
+| TG-D1       | TG-D1-3         | TerrainGridDalA_MCDC                | Constructor_RowsTwo_D1False_Succeeds                    |
+| TG-D2       | TG-D2-1         | TerrainGridDalA_MCDC                | Constructor_PostingZero_D3True_Throws                   |
+| TG-D2       | TG-D2-2         | TerrainGridDalA_MCDC                | Constructor_PostingSmallPositive_D3False_Succeeds       |
+| TG-D3       | TG-D3-1         | TerrainGridDalA_MCDC                | SetElevation_RowAtMax_D4True_Throws                     |
+| TG-D3       | TG-D3-2         | TerrainGridDalA_MCDC                | SetElevation_BothOutOfRange_D4D5True_Throws             |
+| TG-D3       | TG-D3-3         | TerrainGridDalA_MCDC                | SetElevation_RowAtMaxMinusOne_D4False_Succeeds          |
+| TG-D4       | TG-D4-1         | TerrainGridDalA_MCDC                | GetElevationAtCell_ColAtMax_D5True_Throws               |
+| TG-D4       | TG-D4-2         | TerrainGridDalA_MCDC                | SetElevation_BothOutOfRange_D4D5True_Throws             |
+| TG-D4       | TG-D4-3         | TerrainGridDalA_MCDC                | GetElevationAtCell_ColAtMaxMinusOne_D5False_Succeeds    |
+| TG-D5       | TG-D5-1         | TerrainGridDalA_MCDC                | IsInsideGrid_AllTrue_D6True                             |
+| TG-D5       | TG-D5-2         | TerrainGridDalA_MCDC                | IsInsideGrid_RowNegative_D6False                        |
+| TG-D5       | TG-D5-3         | TerrainGridDalA_MCDC                | IsInsideGrid_RowBeyondMax_D6False                       |
+| TG-D5       | TG-D5-4         | TerrainGridDalA_MCDC                | IsInsideGrid_ColNegative_D6False                        |
+| TG-D5       | TG-D5-5         | TerrainGridDalA_MCDC                | IsInsideGrid_ColBeyondMax_D6False                       |
+| TG-D6a      | TG-D6a-1        | TerrainGridDalA_MCDC                | GetElevation_AtUpperRowBoundary_D7Clamped               |
+| TG-D6a      | TG-D6a-2        | TerrainGridDalA_MCDC                | GetElevation_WellInsideGrid_D7NotClamped                |
+| TG-D6b      | TG-D6b-1        | TerrainGridDalA_MCDC                | GetElevation_AtUpperRowBoundary_D7Clamped               |
+| TG-D6b      | TG-D6b-2        | TerrainGridDalA_MCDC                | GetElevation_WellInsideGrid_D7NotClamped                |
+| TG-D6c      | TG-D6c-1        | TerrainGridDalA_Robustness          | QueryFarWest_ClampsToEdge                               |
+| TG-D6c      | TG-D6c-2        | TerrainGridDalA_MCDC                | GetElevation_WellInsideGrid_D7NotClamped                |
+| TG-D6d      | TG-D6d-1        | TerrainGridDalA_Robustness          | QueryFarOutside_ClampsToEdge_NoCrash                    |
+| TG-D6d      | TG-D6d-2        | TerrainGridDalA_MCDC                | GetElevation_WellInsideGrid_D7NotClamped                |
+| TG-D7a      | TG-D7a-1        | TerrainGridDalA                     | FillSlope_Combined_BilinearGradient                     |
+| TG-D7a      | TG-D7a-2        | TerrainGridDalA                     | FillSlopeNS_LinearGradient                              |
+| TG-D7b      | TG-D7b-1        | TerrainGridDalA                     | FillSlope_Combined_BilinearGradient                     |
+| TG-D7b      | TG-D7b-2        | TerrainGridDalA                     | FillSlopeEW_LinearGradient                              |
+| TG-D8       | TG-D8-1         | TerrainGridDalA                     | BatchQuery_MatchesSingleQueries                         |
+| TG-D8       | TG-D8-2         | TerrainGridDalA_Robustness          | BatchQuery_EmptyCount_NoCrash                           |
+| CD-D8       | CD-D8-1         | CFITDalA_MCDC                       | SetClearanceThreshold_BelowMin_ClampedTo25              |
+| CD-D8       | CD-D8-2         | CFITDalA_MCDC                       | SetClearanceThreshold_InRange_Accepted                  |
+| CD-D9       | CD-D9-1         | CFITDalA_MCDC                       | SetClearanceThreshold_AboveMax_ClampedTo500             |
+| CD-D9       | CD-D9-2         | CFITDalA_MCDC                       | SetClearanceThreshold_InRange_Accepted                  |
+| CD-D10      | CD-D10-1        | CFITDalA_MCDC                       | SetLookaheadTime_Below60_ClampedTo60                    |
+| CD-D10      | CD-D10-2        | CFITDalA_MCDC                       | SetLookaheadTime_Above60_Accepted                       |
+| CD-D11      | CD-D11-1        | CFITDalA_MCDC                       | Evaluate_LoopRunsCorrectSteps_D11                       |
+| CD-D11      | CD-D11-2        | CFITDalA_MCDC                       | Evaluate_MaxStepsLimitsIteration_D11                    |
+| CD-D11      | CD-D11-3        | CFITDalA_MCDC                       | Evaluate_LoopRunsCorrectSteps_D11                       |
+| CD-D12      | MC-CD12-1       | CFITDalA_MCDC                       | Evaluate_AircraftBelowTerrain_Warning_D12               |
+| CD-D12      | MC-CD12-2       | CFITDalA_MCDC                       | Evaluate_ClearanceAboveCaution_None_D13False            |
+| CD-D12      | MC-CD12-3       | CFITDalA_MCDC                       | Evaluate_ImpactDetected_WarningTakesPriority_D15True    |
+| CD-D13      | CD-D13-1        | CFITDalA_MCDC                       | Evaluate_ClearanceBelowCaution_Caution_D13True          |
+| CD-D13      | CD-D13-2        | CFITDalA_MCDC                       | Evaluate_ClearanceAboveCaution_None_D13False            |
+| CD-D14      | CD-D14-1        | CFITDalA_MCDC                       | Evaluate_DescendingFlight_MinClearanceAtEnd_D14         |
+| CD-D14      | CD-D14-2        | CFITDalA_MCDC                       | Evaluate_LevelFlight_MinClearanceConstant_D14           |
+| CD-D15      | CD-D15-1        | CFITDalA_Robustness                 | PredictPosition_HeadingNorth_LatIncreases               |
+| CD-D15      | CD-D15-2        | CFITDalA_Robustness                 | PredictPosition_TimeZero_ReturnsOriginalPosition        |
+| CD-D16      | CD-D16-1        | CFITDalA_MCDC                       | Evaluate_NoImpact_CautionCheckRuns_D15False             |
+| CD-D16      | CD-D16-2        | CFITDalA_MCDC                       | Evaluate_ImpactDetected_WarningTakesPriority_D15True    |
 
 ---
 
@@ -994,3 +1131,4 @@ Both modes must be tested to achieve MC/DC. In practice, time-limit termination 
 | Rev | Date       | Author                          | Description              |
 |-----|------------|---------------------------------|--------------------------|
 | 1.0 | 2026-03-14 | LLM-Assisted (Claude Opus 4.6) | Initial MC/DC analysis   |
+| 1.1 | 2026-03-15 | LLM-Assisted (Claude Opus 4.6) | Added 3 undocumented decisions (TG-D8, CD-D15, CD-D16); reclassified CD-D12 as 2-condition AND; updated Section 9.1 traceability table to match actual test names; corrected decision count to 21 |

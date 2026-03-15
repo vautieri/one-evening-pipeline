@@ -5,7 +5,7 @@
 **DAL:** A (Catastrophic) — DO-178C
 **Version:** 1.0
 **Date:** 2026-03-14
-**Status:** Draft
+**Status:** Baselined
 
 ---
 
@@ -14,6 +14,7 @@
 | Version | Date       | Author       | Description           |
 |---------|------------|--------------|-----------------------|
 | 1.0     | 2026-03-14 | SynthFlight  | Initial release       |
+| 1.1     | 2026-03-15 | SynthFlight  | Status changed to Baselined per Pre-Implementation Gate audit |
 
 ---
 

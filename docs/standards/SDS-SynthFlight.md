@@ -6,7 +6,7 @@
 **Language:** C++17 (ISO/IEC 14882:2017)
 **Version:** 1.0
 **Date:** 2026-03-14
-**Status:** Draft
+**Status:** Baselined
 
 ---
 
@@ -478,3 +478,4 @@ Each design element reviewed shall receive one of the following dispositions:
 | Version | Date | Author | Description |
 |---|---|---|---|
 | 1.0 | 2026-03-14 | SynthFlight Standards Team | Initial release |
+| 1.1 | 2026-03-15 | SynthFlight Standards Team | Status changed to Baselined per Pre-Implementation Gate audit |

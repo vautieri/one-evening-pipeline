@@ -5,7 +5,7 @@
 | TAR Number     | TAR-SF-003                                         |
 | Title          | Terrain Engine Core Verification & DAL A Coverage Enhancement |
 | Date Issued    | 2026-03-14                                         |
-| Status         | Open                                               |
+| Status         | Implementation Complete (PR #9 merged)              |
 | Priority       | Critical (terrain engine feeds CFIT alerting and mission planning) |
 | Assigned To    | Development Team (LLM-Assisted)                    |
 | DAL            | A (Catastrophic) — DO-178C                         |
@@ -46,39 +46,45 @@ Specific objectives:
 
 Public API functions:
 
-| #  | Function / Method                          | Category         |
-|----|--------------------------------------------|------------------|
-| 1  | Constructor `TerrainGrid(rows, cols, postingMeters)` | Construction |
-| 2  | `SetElevation(row, col, elevation)`        | Data Entry       |
-| 3  | `GetElevationAtCell(row, col)`             | Cell Access      |
-| 4  | `GetRows()`                                | Query            |
-| 5  | `GetCols()`                                | Query            |
-| 6  | `GetPostingMeters()`                       | Query            |
-| 7  | `IsInsideGrid(northMeters, eastMeters)`    | Bounds Check     |
-| 8  | `GetElevation(northMeters, eastMeters)`    | Interpolation    |
-| 9  | `GetElevationBatch(positions)`             | Batch Query      |
-| 10 | `FillFlat(elevation)`                      | Grid Fill        |
-| 11 | `FillSlope(baseElevation, slopeNorth, slopeEast)` | Grid Fill  |
-| 12 | `ToGridCoordinates(northMeters, eastMeters)` | Coordinate Conversion |
-| 13 | `ToWorldCoordinates(gridRow, gridCol)`     | Coordinate Conversion |
+| #  | Function / Method                                              | Category              |
+|----|----------------------------------------------------------------|-----------------------|
+| 1  | Constructor `TerrainGrid(rows, cols, postingMeters, originLat, originLon)` | Construction |
+| 2  | `SetElevation(row, col, elevation)`                            | Data Entry            |
+| 3  | `GetElevationAtCell(row, col)`                                 | Cell Access           |
+| 4  | `GetRows()`                                                    | Query                 |
+| 5  | `GetCols()`                                                    | Query                 |
+| 6  | `GetPostingMeters()`                                           | Query                 |
+| 7  | `GetOriginLat()`                                               | Query                 |
+| 8  | `GetOriginLon()`                                               | Query                 |
+| 9  | `IsInsideGrid(lat, lon)`                                       | Bounds Check          |
+| 10 | `GetElevation(lat, lon)`                                       | Interpolation         |
+| 11 | `GetElevationBatch(lats, lons, elevations, count)`             | Batch Query           |
+| 12 | `FillFlat(elevation)`                                          | Grid Fill             |
+| 13 | `FillSlope(baseElevation, slopeNS_degrees, slopeEW_degrees)`  | Grid Fill             |
+| 14 | `LatLonToGrid(lat, lon, row, col)`                             | Coordinate Conversion |
+| 15 | `GridToLatLon(row, col, lat, lon)`                             | Coordinate Conversion |
+| 16 | `GetMinElevation()`                                            | Statistics            |
+| 17 | `GetMaxElevation()`                                            | Statistics            |
+| 18 | `GetMeanElevation()`                                           | Statistics            |
 
 #### TerrainCollisionDetector — CFIT look-ahead prediction (namespace SynthFlight)
 
 Public API functions:
 
-| #  | Function / Method                          | Category         |
-|----|--------------------------------------------|------------------|
-| 1  | Constructor `TerrainCollisionDetector(grid)` | Construction   |
-| 2  | `SetClearanceThreshold(meters)`            | Configuration    |
-| 3  | `GetClearanceThreshold()`                  | Query            |
-| 4  | `SetLookaheadTime(seconds)`               | Configuration    |
-| 5  | `GetLookaheadTime()`                       | Query            |
-| 6  | `SetTimeStep(seconds)`                     | Configuration    |
-| 7  | `GetTimeStep()`                            | Query            |
-| 8  | `Evaluate(position, velocity, altitude)`   | CFIT Evaluation  |
-| 9  | `GetLastMinClearance()`                    | Result Query     |
-| 10 | `GetLastAlertLevel()`                      | Result Query     |
-| 11 | `GetLastCollisionTime()`                   | Result Query     |
+| #  | Function / Method                                                                  | Category              |
+|----|------------------------------------------------------------------------------------|-----------------------|
+| 1  | Constructor `TerrainCollisionDetector(terrain)`                                    | Construction          |
+| 2  | `SetConfig(config)`                                                                | Configuration         |
+| 3  | `GetConfig()`                                                                      | Query                 |
+| 4  | `SetClearanceThreshold(thresholdFt)`                                               | Configuration         |
+| 5  | `GetClearanceThreshold()`                                                          | Query                 |
+| 6  | `SetLookaheadTime(timeSec)`                                                        | Configuration         |
+| 7  | `GetLookaheadTime()`                                                               | Query                 |
+| 8  | `Evaluate(state)` — returns `CFITResult` (includes alertLevel, timeToImpactSec, minimumClearanceFt) | CFIT Evaluation |
+| 9  | `PredictPosition(state, timeSec, lat, lon, altMSL)` — static                      | Trajectory Prediction |
+| 10 | `FeetToMeters(ft)` — static constexpr                                             | Unit Conversion       |
+| 11 | `MetersToFeet(m)` — static constexpr                                              | Unit Conversion       |
+| 12 | `KnotsToFPS(kts)` — static constexpr                                              | Unit Conversion       |
 
 ### 2.3 Test Framework
 
@@ -99,10 +105,10 @@ Public API functions:
 
 | Requirement ID | Description                                      | Functions Covered                                                                 |
 |----------------|--------------------------------------------------|-----------------------------------------------------------------------------------|
-| REQ-SF-0400    | Multi-Format Terrain Data Ingestion (partial — grid data model only) | Constructor, SetElevation, FillFlat, FillSlope, GetElevationAtCell, GetRows, GetCols, GetPostingMeters |
-| REQ-SF-0402    | Terrain Collision Detection (CFIT Prevention)    | TerrainCollisionDetector::Evaluate, SetClearanceThreshold, SetLookaheadTime, SetTimeStep, GetLastMinClearance, GetLastAlertLevel, GetLastCollisionTime |
+| REQ-SF-0400    | Multi-Format Terrain Data Ingestion (partial — grid data model only) | Constructor, SetElevation, FillFlat, FillSlope, GetElevationAtCell, GetRows, GetCols, GetPostingMeters, GetOriginLat, GetOriginLon, GetMinElevation, GetMaxElevation, GetMeanElevation |
+| REQ-SF-0402    | Terrain Collision Detection (CFIT Prevention)    | TerrainCollisionDetector::Evaluate, SetConfig, GetConfig, SetClearanceThreshold, SetLookaheadTime, GetClearanceThreshold, GetLookaheadTime, PredictPosition, FeetToMeters, MetersToFeet, KnotsToFPS |
 | REQ-SF-0404    | Parameterized Infrastructure Obstacle Library (future increment) | Placeholder — not covered in this TAR; reserved for Increment 4 |
-| REQ-SF-0406    | Elevation Query API                              | GetElevation, GetElevationBatch, IsInsideGrid, ToGridCoordinates, ToWorldCoordinates |
+| REQ-SF-0406    | Elevation Query API                              | GetElevation, GetElevationBatch, IsInsideGrid, LatLonToGrid, GridToLatLon |
 | REQ-SF-1400    | DO-178C DAL A structural coverage evidence       | All functions — coverage artifacts (SC, DC, MC/DC) produced for each              |
 
 ---
@@ -149,9 +155,9 @@ Tests will be organized into Google Test fixtures and test suites:
 - `TerrainGridConstructionTest` — constructor validation, invalid dimensions, posting checks
 - `TerrainGridDataEntryTest` — SetElevation, FillFlat, FillSlope, boundary access
 - `TerrainGridInterpolationTest` — bilinear interpolation, boundary clamping, known-good reference values
-- `TerrainGridCoordinateTest` — ToGridCoordinates, ToWorldCoordinates, roundtrip accuracy
+- `TerrainGridCoordinateTest` — LatLonToGrid, GridToLatLon, roundtrip accuracy
 - `TerrainGridBatchTest` — GetElevationBatch edge cases
-- `TerrainCollisionDetectorConfigTest` — threshold/lookahead/timestep configuration and clamping
+- `TerrainCollisionDetectorConfigTest` — SetConfig/GetConfig, threshold/lookahead configuration and clamping
 - `TerrainCollisionDetectorEvaluateTest` — CFIT evaluation on synthetic terrains
 - `TerrainMCDCTest` — dedicated MC/DC condition-isolation tests
 - `TerrainRobustnessTest` — extreme inputs, degenerate grids, edge stress tests
@@ -162,7 +168,7 @@ Tests will be organized into Google Test fixtures and test suites:
 - **Synthetic terrain grids:** Create deterministic grids (flat, sloped, step, valley, peak) with analytically known elevation values for verification.
 - **Known-good bilinear interpolation:** Compute reference interpolation values by hand for grid midpoints, quarter-points, and edge positions. Verify against module output within floating-point tolerance.
 - **CFIT alert verification:** Construct terrain and trajectory combinations where collision time and clearance are analytically computable. Verify alert levels match expected transitions.
-- **Coordinate conversion roundtrip:** Verify `ToGridCoordinates(ToWorldCoordinates(r, c)) == (r, c)` within tolerance for all grid positions.
+- **Coordinate conversion roundtrip:** Verify `LatLonToGrid(GridToLatLon(r, c)) == (r, c)` within tolerance for all grid positions.
 
 ---
 
@@ -275,10 +281,10 @@ All of the following must be satisfied before TAR-SF-003 can be closed:
 | Phase                  | Description                                           | Effort Estimate      | Status       |
 |------------------------|-------------------------------------------------------|----------------------|--------------|
 | Phase 1 -- Intake      | TAR creation, scope definition, MC/DC analysis        | 1 session            | **Complete** |
-| Phase 2 -- Plan        | Detailed test plan with MC/DC pairs, test case IDs    | 1 session            | Not Started  |
-| Phase 3 -- Generate    | Test code generation, compilation, initial debug      | 2-3 sessions         | Not Started  |
-| Phase 4 -- Validate    | Run tests, coverage analysis, gap identification      | 1 session            | Not Started  |
-| Phase 5 -- Document    | SVR entry, traceability matrix, MC/DC analysis report | 1 session            | Not Started  |
+| Phase 2 -- Plan        | Detailed test plan with MC/DC pairs, test case IDs    | 1 session            | **Complete** |
+| Phase 3 -- Generate    | Test code generation, compilation, initial debug      | 2-3 sessions         | **Complete** |
+| Phase 4 -- Validate    | Run tests, coverage analysis, gap identification      | 1 session            | **Complete** |
+| Phase 5 -- Document    | SVR entry, traceability matrix, MC/DC analysis report | 1 session            | **Complete** |
 
 **Total estimated:** 6-7 sessions
 
@@ -323,3 +329,4 @@ All of the following must be satisfied before TAR-SF-003 can be closed:
 | Rev | Date       | Author                       | Description              |
 |-----|------------|------------------------------|--------------------------|
 | 1.0 | 2026-03-14 | LLM-Assisted (Claude Opus 4.6) | Initial TAR creation  |
+| 1.1 | 2026-03-15 | LLM-Assisted (Claude Opus 4.6) | Updated Section 2.2 API to match as-built source; added 11 undocumented public functions; aligned per traceability audit findings |

@@ -7,7 +7,7 @@
 **Coding Standard:** C++17 (2023), GCC
 **Version:** 1.0
 **Date:** 2026-03-14
-**Status:** Draft
+**Status:** Baselined
 
 ---
 
@@ -16,6 +16,7 @@
 | Version | Date       | Author            | Description               |
 |---------|------------|-------------------|---------------------------|
 | 1.0     | 2026-03-14 | SynthFlight Team  | Initial release            |
+| 1.1     | 2026-03-15 | SynthFlight Team  | Status changed to Baselined per Pre-Implementation Gate audit |
 
 ---
 
