@@ -4,7 +4,7 @@
 **Product:** SynthFlight — UAV Mission Simulation and Verification Platform
 **Version:** 1.0
 **Date:** 2026-03-14
-**Status:** Baseline Draft
+**Status:** Baselined
 
 ---
 
@@ -2186,6 +2186,15 @@ Note: Two additional requirements beyond the 119 unique capability requirements 
 | USGS Lidar Base Spec | USGS Lidar Base Specification |
 | NOAA SPA | Solar Position Algorithm |
 | EGM96 / EGM2008 | Earth Gravitational Model |
+
+---
+
+## Revision History
+
+| Version | Date | Author | Description |
+|---------|------|--------|-------------|
+| 1.0 | 2026-03-14 | SynthFlight Team | Initial release |
+| 1.1 | 2026-03-15 | SynthFlight Team | Status changed to Baselined per Pre-Implementation Gate audit |
 
 ---
 

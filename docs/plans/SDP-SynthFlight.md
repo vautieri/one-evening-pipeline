@@ -4,7 +4,7 @@
 **Product:** SynthFlight — UAV Mission Simulation and Verification Platform
 **Version:** 1.0
 **Date:** 2026-03-14
-**Status:** Baseline Draft
+**Status:** Baselined
 **DAL:** A (Catastrophic) per DO-178C
 **Prepared By:** SynthFlight Development Team
 **Approved By:** ___________________________________ (Program Manager)
@@ -18,6 +18,7 @@
 | Rev | Date | Author | Description |
 |-----|------|--------|-------------|
 | 1.0 | 2026-03-14 | SynthFlight Team | Initial baseline release |
+| 1.1 | 2026-03-15 | SynthFlight Team | Status changed to Baselined per Pre-Implementation Gate audit |
 
 ---
 
