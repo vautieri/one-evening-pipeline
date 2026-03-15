@@ -21,3 +21,8 @@ gtest_discover_tests(test_atmosphere_gtest)
 add_executable(test_atmosphere_dala_gtest test_atmosphere_dala_gtest.cpp)
 target_link_libraries(test_atmosphere_dala_gtest PRIVATE jsbsim_atmosphere GTest::gtest_main)
 gtest_discover_tests(test_atmosphere_dala_gtest)
+
+# TAR-SF-003: DAL A coverage tests for Terrain Engine
+add_executable(test_terrain_dala_gtest test_terrain_dala_gtest.cpp)
+target_link_libraries(test_terrain_dala_gtest PRIVATE synthflight_terrain GTest::gtest_main)
+gtest_discover_tests(test_terrain_dala_gtest)
