@@ -1,70 +1,85 @@
 # =============================================================================
 # SYNTHFLIGHT PROJECT — LOCAL GOOSE HINTS
 # =============================================================================
-# Project-specific overrides and references for the SynthFlight workspace.
+# Project-specific context for the SynthFlight workspace.
 # This supplements the global ~/.config/goose/.goosehints file.
 # =============================================================================
 
 ## PROJECT IDENTITY
-
 - **Product:** SynthFlight — UAV Mission Simulation and Verification Platform
 - **Repository:** github.com/vautieri/one-evening-pipeline
 - **DAL:** A (Catastrophic) — DO-178C
 - **Coding Standard:** C++17 (ISO/IEC 14882:2017), GCC — see docs/standards/SCS-SynthFlight.md
-- **SRS:** docs/requirements/SRS-SynthFlight.md (149 requirements)
+- **SRS:** docs/requirements/SRS-SynthFlight.md (119 unified requirements)
+
+## WBS STRUCTURE
+The Work Breakdown Structure is defined in docs/requirements/SRS-SynthFlight.md.
+Always look up the WBS element for the module under test before starting work.
 
 ## DOCUMENT MAP
-
 When starting any task, load the relevant documents from this map:
-
 ```
 docs/
 ├── cdrl/
-│   └── CDRL-Register.md          ← Master deliverables tracker (CDRL-SF-2026-001)
+│   └── CDRL-Register.md            ← Master deliverables tracker (CDRL-SF-2026-001)
 ├── plans/
-│   ├── PSAC-SynthFlight.md       ← Certification plan (PSAC-SF-2026-001)
-│   ├── SDP-SynthFlight.md        ← Development plan (SDP-SF-2026-001)
-│   ├── SVP-SynthFlight.md        ← Verification plan (SVP-SF-2026-001)
-│   ├── SCMP-SynthFlight.md       ← Config management plan (SCMP-SF-2026-001)
-│   └── SQAP-SynthFlight.md       ← Quality assurance plan (SQAP-SF-2026-001)
+│   ├── PSAC-SynthFlight.md         ← Certification plan (PSAC-SF-2026-001)
+│   ├── SDP-SynthFlight.md         ← Development plan (SDP-SF-2026-001)
+│   ├── SVP-SynthFlight.md          ← Verification plan (SVP-SF-2026-001)
+│   ├── SCMP-SynthFlight.md         ← Config management plan (SCMP-SF-2026-001)
+│   └── SQAP-SynthFlight.md         ← Quality assurance plan (SQAP-SF-2026-001)
 ├── requirements/
-│   ├── SRS-SynthFlight.md        ← Unified requirements (SRS-SF-2026-001)
-│   ├── requirement-crossref.md   ← Deduplication cross-reference
-│   └── raw/                      ← 5 industry-specific raw requirement files
-└── standards/
-    ├── SRS-Standard-SynthFlight.md ← How to write requirements (SRS-STD-SF-2026-001)
-    ├── SDS-SynthFlight.md          ← Design standards (SDS-SF-2026-001)
-    └── SCS-SynthFlight.md          ← Code standards (SCS-SF-2026-001)
+│   ├── SRS-SynthFlight.md          ← Unified requirements (SRS-SF-2026-001)
+│   ├── requirement-crossref.md     ← Deduplication cross-reference
+│   └── raw/                        ← 5 industry-specific raw requirement files
+├── standards/
+│   ├── SRS-Standard-SynthFlight.md ← How to write requirements (SRS-STD-SF-2026-001)
+│   ├── SDS-SynthFlight.md          ← Design standards (SDS-SF-2026-001)
+│   └── SCS-SynthFlight.md          ← Code standards (SCS-SF-2026-001)
+├── tars/
+│   ├── TAR-SF-001.md               ← Math library DAL A verification
+│   ├── TAR-SF-001-MCDC-Analysis.md ← MC/DC analysis for math library
+│   ├── TAR-SF-002.md               ← Atmosphere model DAL A verification
+│   ├── TAR-SF-002-MCDC-Analysis.md ← MC/DC analysis for atmosphere model
+│   ├── TAR-SF-003.md               ← Terrain engine DAL A verification
+│   ├── TAR-SF-003-MCDC-Analysis.md ← MC/DC analysis for terrain engine
+│   └── TAR-SF-004.md               ← JSBSim submodule integration
+└── verification/
+    └── SVR-SynthFlight-Increment1.md ← SVR for math + atmosphere (Increment 1)
 ```
 
 ## SOURCE CODE MAP
-
 ```
 src/
 ├── math/
-│   ├── FGColumnVector3.h/.cpp    ← 3D column vector (1-based indexing)
-│   └── FGMatrix33.h/.cpp         ← 3x3 matrix (determinant, inverse, Euler extraction)
-└── models/
-    ├── FGAtmosphereBase.h        ← ISA base class (constants, unit conversions, Sutherland's law)
-    └── FGStandardAtmosphere1976.h/.cpp ← 1976 US Standard Atmosphere (9-layer model)
+│   ├── FGColumnVector3.h/.cpp      ← 3D column vector (1-based indexing)
+│   └── FGMatrix33.h/.cpp           ← 3x3 matrix (determinant, inverse, Euler extraction)
+├── models/
+│   ├── FGAtmosphereBase.h          ← ISA base class (constants, unit conversions, Sutherland's law)
+│   └── FGStandardAtmosphere1976.h/.cpp ← 1976 US Standard Atmosphere (9-layer model)
+└── terrain/
+    ├── TerrainGrid.h/.cpp          ← Grid coordinate system, elevation data
+    └── TerrainCollisionDetector.h/.cpp ← CFIT detection, alert levels, prediction
 ```
 
 ## TEST MAP
-
 ```
 tests/
-├── googletest/                   ← Primary test suite (GTest)
-│   ├── test_math_gtest.cpp       ← Vector + Matrix tests
-│   └── test_atmosphere_gtest.cpp ← ISA 1976 atmosphere tests
-├── catch2/                       ← Catch2 test suite
-├── doctest/                      ← Doctest test suite
-├── boosttest/                    ← Boost.Test suite (disabled by default)
-├── cppunit/                      ← CppUnit suite (disabled by default)
-└── fuzz/                         ← libFuzzer targets (vector, matrix, atmosphere)
+├── googletest/
+│   ├── test_math_gtest.cpp              ← Vector + Matrix tests
+│   ├── test_atmosphere_gtest.cpp        ← ISA 1976 atmosphere tests
+│   ├── test_vector_dala_gtest.cpp       ← DAL A vector MC/DC tests (TAR-SF-001)
+│   ├── test_matrix_dala_gtest.cpp       ← DAL A matrix MC/DC tests (TAR-SF-001)
+│   ├── test_atmosphere_dala_gtest.cpp   ← DAL A atmosphere MC/DC tests (TAR-SF-002)
+│   └── test_terrain_dala_gtest.cpp      ← DAL A terrain MC/DC tests (TAR-SF-003)
+├── catch2/                              ← Catch2 test suite
+├── doctest/                             ← Doctest test suite
+├── boosttest/                           ← Boost.Test suite (disabled by default)
+├── cppunit/                             ← CppUnit suite (disabled by default)
+└── fuzz/                                ← libFuzzer targets (vector, matrix, atmosphere)
 ```
 
 ## CI/CD WORKFLOWS
-
 ```
 .github/workflows/
 ├── ci.yml                ← Multi-compiler build + test + lcov coverage
@@ -74,11 +89,15 @@ tests/
 ```
 
 ## QUICK REFERENCE — BEFORE YOU START ANY TAR
-
-1. Read the CDRL Register: `docs/cdrl/CDRL-Register.md`
-2. Read the applicable requirements from: `docs/requirements/SRS-SynthFlight.md`
-3. Read the code standard: `docs/standards/SCS-SynthFlight.md`
-4. Read the verification plan: `docs/plans/SVP-SynthFlight.md`
-5. Verify all plans are baselined (check status in CDRL Register)
-6. Collect: TAR number, WBS element, requirement IDs, source files, functions under test
-7. Follow the 5-phase workflow: INTAKE → PLAN → GENERATE → VALIDATE → DOCUMENT
+1. Ask the user for the TAR number and description
+2. Read the CDRL Register: `docs/cdrl/CDRL-Register.md`
+3. Read the SRS and find applicable requirements: `docs/requirements/SRS-SynthFlight.md`
+4. Look up the WBS element for the module in the SRS
+5. Confirm the DAL level from PROJECT IDENTITY above
+6. Read the code standard: `docs/standards/SCS-SynthFlight.md`
+7. Read the verification plan: `docs/plans/SVP-SynthFlight.md`
+8. Verify all plans are baselined (check status in CDRL Register)
+9. Present your findings and ask "Is this correct?" before proceeding
+10. Do the work (follow the 5-phase workflow from the global .goosehints)
+11. Update the CDRL Register with any new or modified deliverables
+12. Present what will be committed and ask for approval before committing

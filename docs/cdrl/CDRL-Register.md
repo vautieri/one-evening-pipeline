@@ -44,20 +44,20 @@ This register covers all software life cycle data required for DAL A certificati
 
 | CDRL No. | Abbr. | Data Item Title | DO-178C Ref | Document ID | Status | DAL A Applicability | Target Baseline |
 |----------|-------|-----------------|-------------|-------------|--------|---------------------|-----------------|
-| CDRL-SF-001 | PSAC | Plan for Software Aspects of Certification | 11.1 | PSAC-SF-2026-001 | Draft | Required | 2026-05-15 |
-| CDRL-SF-002 | SDP | Software Development Plan | 11.2 | SDP-SF-2026-001 | Draft | Required | 2026-05-15 |
-| CDRL-SF-003 | SVP | Software Verification Plan | 11.3 | SVP-SF-2026-001 | Draft | Required | 2026-05-15 |
-| CDRL-SF-004 | SCMP | Software Configuration Management Plan | 11.4 | SCMP-SF-2026-001 | Draft | Required | 2026-05-15 |
-| CDRL-SF-005 | SQAP | Software Quality Assurance Plan | 11.5 | SQAP-SF-2026-001 | Draft | Required with Independence | 2026-05-15 |
-| CDRL-SF-006 | SRS | Software Requirements Standards | 11.6 | SRS-STD-SF-2026-001 | Draft | Required | 2026-05-15 |
-| CDRL-SF-007 | SDS | Software Design Standards | 11.7 | SDS-SF-2026-001 | Draft | Required | 2026-05-15 |
-| CDRL-SF-008 | SCS | Software Code Standards | 11.8 | SCS-SF-2026-001 | Draft | Required | 2026-05-15 |
+| CDRL-SF-001 | PSAC | Plan for Software Aspects of Certification | 11.1 | PSAC-SF-2026-001 | Baselined | Required | 2026-05-15 |
+| CDRL-SF-002 | SDP | Software Development Plan | 11.2 | SDP-SF-2026-001 | Baselined | Required | 2026-05-15 |
+| CDRL-SF-003 | SVP | Software Verification Plan | 11.3 | SVP-SF-2026-001 | Baselined | Required | 2026-05-15 |
+| CDRL-SF-004 | SCMP | Software Configuration Management Plan | 11.4 | SCMP-SF-2026-001 | Baselined | Required | 2026-05-15 |
+| CDRL-SF-005 | SQAP | Software Quality Assurance Plan | 11.5 | SQAP-SF-2026-001 | Baselined | Required with Independence | 2026-05-15 |
+| CDRL-SF-006 | SRS-STD | Software Requirements Standards | 11.6 | SRS-STD-SF-2026-001 | Baselined | Required | 2026-05-15 |
+| CDRL-SF-007 | SDS | Software Design Standards | 11.7 | SDS-SF-2026-001 | Baselined | Required | 2026-05-15 |
+| CDRL-SF-008 | SCS | Software Code Standards | 11.8 | SCS-SF-2026-001 | Baselined | Required | 2026-05-15 |
 | CDRL-SF-009 | SRD | Software Requirements Data | 11.9 | SRD-SF-2026-001 | Draft | Required | 2026-07-01 |
 | CDRL-SF-010 | SDD | Software Design Description | 11.10 | SDD-SF-2026-001 | Not Started | Required | 2026-08-15 |
 | CDRL-SF-011 | SC | Source Code | 11.11 | SC-SF-2026-001 | Draft | Required | 2026-10-01 |
 | CDRL-SF-012 | EO | Executable Object Code | 11.12 | EO-SF-2026-001 | Not Started | Required | 2026-11-01 |
-| CDRL-SF-013 | SVCP | Software Verification Cases and Procedures | 11.13 | SVCP-SF-2026-001 | Not Started | Required with Independence | 2026-09-15 |
-| CDRL-SF-014 | SVR | Software Verification Results | 11.14 | SVR-SF-2026-001 | Not Started | Required with Independence | 2026-11-15 |
+| CDRL-SF-013 | SVCP | Software Verification Cases and Procedures | 11.13 | SVCP-SF-2026-001 | Draft | Required with Independence | 2026-09-15 |
+| CDRL-SF-014 | SVR | Software Verification Results | 11.14 | SVR-SF-2026-001 | Draft | Required with Independence | 2026-11-15 |
 | CDRL-SF-015 | SECI | Software Life Cycle Environment Configuration Index | 11.15 | SECI-SF-2026-001 | Not Started | Required | 2026-11-15 |
 | CDRL-SF-016 | SCI | Software Configuration Index | 11.16 | SCI-SF-2026-001 | Not Started | Required | 2026-12-01 |
 | CDRL-SF-017 | SAS | Software Accomplishment Summary | 11.17 | SAS-SF-2026-001 | Not Started | Required with Independence | 2026-12-15 |
@@ -79,9 +79,9 @@ This register covers all software life cycle data required for DAL A certificati
 | **DID Reference** | DI-MISC-81466 |
 | **Document ID** | PSAC-SF-2026-001 |
 | **File Path** | `docs/plans/PSAC-SynthFlight.md` |
-| **Status** | Draft |
+| **Status** | Baselined |
 | **DAL A Applicability** | Required |
-| **Current Version** | 0.1 |
+| **Current Version** | 1.0 |
 | **Target Baseline Date** | 2026-05-15 |
 | **Responsible Role** | Software Project Manager |
 | **Review Authority** | DER / Certification Authority |
@@ -103,9 +103,9 @@ This register covers all software life cycle data required for DAL A certificati
 | **DID Reference** | DI-IPSC-81427 |
 | **Document ID** | SDP-SF-2026-001 |
 | **File Path** | `docs/plans/SDP-SynthFlight.md` |
-| **Status** | Draft |
+| **Status** | Baselined |
 | **DAL A Applicability** | Required |
-| **Current Version** | 0.1 |
+| **Current Version** | 1.0 |
 | **Target Baseline Date** | 2026-05-15 |
 | **Responsible Role** | Software Development Lead |
 | **Review Authority** | Software Quality Assurance (SQA) |
@@ -127,9 +127,9 @@ This register covers all software life cycle data required for DAL A certificati
 | **DID Reference** | DI-IPSC-81429 |
 | **Document ID** | SVP-SF-2026-001 |
 | **File Path** | `docs/plans/SVP-SynthFlight.md` |
-| **Status** | Draft |
+| **Status** | Baselined |
 | **DAL A Applicability** | Required |
-| **Current Version** | 0.1 |
+| **Current Version** | 1.0 |
 | **Target Baseline Date** | 2026-05-15 |
 | **Responsible Role** | Software Verification Lead |
 | **Review Authority** | Software Quality Assurance (SQA) |
@@ -151,9 +151,9 @@ This register covers all software life cycle data required for DAL A certificati
 | **DID Reference** | DI-IPSC-81441 |
 | **Document ID** | SCMP-SF-2026-001 |
 | **File Path** | `docs/plans/SCMP-SynthFlight.md` |
-| **Status** | Draft |
+| **Status** | Baselined |
 | **DAL A Applicability** | Required |
-| **Current Version** | 0.1 |
+| **Current Version** | 1.1 |
 | **Target Baseline Date** | 2026-05-15 |
 | **Responsible Role** | Software Configuration Manager |
 | **Review Authority** | Software Quality Assurance (SQA) |
@@ -175,9 +175,9 @@ This register covers all software life cycle data required for DAL A certificati
 | **DID Reference** | DI-QCIC-80572 |
 | **Document ID** | SQAP-SF-2026-001 |
 | **File Path** | `docs/plans/SQAP-SynthFlight.md` |
-| **Status** | Draft |
+| **Status** | Baselined |
 | **DAL A Applicability** | Required with Independence |
-| **Current Version** | 0.1 |
+| **Current Version** | 1.0 |
 | **Target Baseline Date** | 2026-05-15 |
 | **Responsible Role** | Software Quality Assurance Manager |
 | **Review Authority** | Program Manager / DER |
@@ -198,10 +198,10 @@ This register covers all software life cycle data required for DAL A certificati
 | **DO-178C Reference** | Section 11.6 |
 | **DID Reference** | DI-IPSC-81431 |
 | **Document ID** | SRS-STD-SF-2026-001 |
-| **File Path** | `docs/standards/SRS-STD-SynthFlight.md` |
-| **Status** | Draft |
+| **File Path** | `docs/standards/SRS-Standard-SynthFlight.md` |
+| **Status** | Baselined |
 | **DAL A Applicability** | Required |
-| **Current Version** | 0.1 |
+| **Current Version** | 1.0 |
 | **Target Baseline Date** | 2026-05-15 |
 | **Responsible Role** | Software Requirements Lead |
 | **Review Authority** | Software Quality Assurance (SQA) |
@@ -222,10 +222,10 @@ This register covers all software life cycle data required for DAL A certificati
 | **DO-178C Reference** | Section 11.7 |
 | **DID Reference** | DI-IPSC-81432 |
 | **Document ID** | SDS-SF-2026-001 |
-| **File Path** | `docs/standards/SDS-STD-SynthFlight.md` |
-| **Status** | Draft |
+| **File Path** | `docs/standards/SDS-SynthFlight.md` |
+| **Status** | Baselined |
 | **DAL A Applicability** | Required |
-| **Current Version** | 0.1 |
+| **Current Version** | 1.0 |
 | **Target Baseline Date** | 2026-05-15 |
 | **Responsible Role** | Software Architecture Lead |
 | **Review Authority** | Software Quality Assurance (SQA) |
@@ -246,10 +246,10 @@ This register covers all software life cycle data required for DAL A certificati
 | **DO-178C Reference** | Section 11.8 |
 | **DID Reference** | DI-IPSC-81433 |
 | **Document ID** | SCS-SF-2026-001 |
-| **File Path** | `docs/standards/SCS-STD-SynthFlight.md` |
-| **Status** | Draft |
+| **File Path** | `docs/standards/SCS-SynthFlight.md` |
+| **Status** | Baselined |
 | **DAL A Applicability** | Required |
-| **Current Version** | 0.1 |
+| **Current Version** | 1.0 |
 | **Target Baseline Date** | 2026-05-15 |
 | **Responsible Role** | Software Development Lead |
 | **Review Authority** | Software Quality Assurance (SQA) |
@@ -366,10 +366,10 @@ This register covers all software life cycle data required for DAL A certificati
 | **DO-178C Reference** | Section 11.13 |
 | **DID Reference** | DI-IPSC-81439 |
 | **Document ID** | SVCP-SF-2026-001 |
-| **File Path** | `docs/verification/SVCP-SynthFlight.md` and `tests/` |
-| **Status** | Not Started |
+| **File Path** | `tests/` (Google Test, Catch2, Doctest, Boost.Test, CppUnit, libFuzzer) |
+| **Status** | Draft |
 | **DAL A Applicability** | Required with Independence |
-| **Current Version** | — |
+| **Current Version** | 0.3 |
 | **Target Baseline Date** | 2026-09-15 |
 | **Responsible Role** | Software Verification Lead |
 | **Review Authority** | Software Quality Assurance (SQA) |
@@ -390,10 +390,10 @@ This register covers all software life cycle data required for DAL A certificati
 | **DO-178C Reference** | Section 11.14 |
 | **DID Reference** | DI-IPSC-81440 |
 | **Document ID** | SVR-SF-2026-001 |
-| **File Path** | `docs/verification/SVR-SynthFlight.md` and `reports/` |
-| **Status** | Not Started |
+| **File Path** | `docs/verification/SVR-SynthFlight-Increment1.md` and `docs/svr/` |
+| **Status** | Draft |
 | **DAL A Applicability** | Required with Independence |
-| **Current Version** | — |
+| **Current Version** | 0.2 |
 | **Target Baseline Date** | 2026-11-15 |
 | **Responsible Role** | Software Verification Lead |
 | **Review Authority** | Software Quality Assurance (SQA) / DER |
@@ -593,7 +593,7 @@ All 17 items must be Baselined. The SAS and SCI are the final items baselined. T
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
 | 1.0 | 2026-03-14 | Software Quality Assurance | Initial CDRL Register creation |
-| 1.1 | 2026-03-15 | Software Quality Assurance | Status changed to Baselined per Pre-Implementation Gate audit |
+| 1.1 | 2026-03-15 | Software Quality Assurance | Plans/standards baselined, doc ID and file path corrections, SRS count 149→119, SVCP/SVR status updated to Draft, SCMP rev bumped for TAR-SF-004 |
 
 ---
 
