@@ -16,3 +16,8 @@ gtest_discover_tests(test_matrix_dala_gtest)
 add_executable(test_atmosphere_gtest test_atmosphere_gtest.cpp)
 target_link_libraries(test_atmosphere_gtest PRIVATE jsbsim_atmosphere GTest::gtest_main)
 gtest_discover_tests(test_atmosphere_gtest)
+
+# TAR-SF-002: DAL A coverage tests for Atmosphere Model
+add_executable(test_atmosphere_dala_gtest test_atmosphere_dala_gtest.cpp)
+target_link_libraries(test_atmosphere_dala_gtest PRIVATE jsbsim_atmosphere GTest::gtest_main)
+gtest_discover_tests(test_atmosphere_dala_gtest)
