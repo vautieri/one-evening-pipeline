@@ -19,6 +19,7 @@ option(ENABLE_FUZZING  "Build libFuzzer targets"   OFF)  # Requires Clang
 # ── The libraries under test ─────────────────────────────────────────────────
 add_subdirectory(src/math)
 add_subdirectory(src/models)
+add_subdirectory(src/terrain)
 
 # ── Test suites ──────────────────────────────────────────────────────────────
 enable_testing()
