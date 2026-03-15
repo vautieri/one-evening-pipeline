@@ -43,7 +43,9 @@ docs/
 │   ├── TAR-SF-002-MCDC-Analysis.md ← MC/DC analysis for atmosphere model
 │   ├── TAR-SF-003.md               ← Terrain engine DAL A verification
 │   ├── TAR-SF-003-MCDC-Analysis.md ← MC/DC analysis for terrain engine
-│   └── TAR-SF-004.md               ← JSBSim submodule integration
+│   ├── TAR-SF-004.md               ← JSBSim submodule integration
+│   ├── TAR-SF-005.md               ← JSBSim 6-DOF API wrapper DAL A verification
+│   └── TAR-SF-005-MCDC-Analysis.md ← MC/DC analysis for JSBSim interface
 └── verification/
     └── SVR-SynthFlight-Increment1.md ← SVR for math + atmosphere (Increment 1)
 ```
@@ -57,9 +59,11 @@ src/
 ├── models/
 │   ├── FGAtmosphereBase.h          ← ISA base class (constants, unit conversions, Sutherland's law)
 │   └── FGStandardAtmosphere1976.h/.cpp ← 1976 US Standard Atmosphere (9-layer model)
-└── terrain/
-    ├── TerrainGrid.h/.cpp          ← Grid coordinate system, elevation data
-    └── TerrainCollisionDetector.h/.cpp ← CFIT detection, alert levels, prediction
+├── terrain/
+│   ├── TerrainGrid.h/.cpp          ← Grid coordinate system, elevation data
+│   └── TerrainCollisionDetector.h/.cpp ← CFIT detection, alert levels, prediction
+└── simulation/
+    └── JSBSimInterface.h/.cpp      ← JSBSim 6-DOF wrapper (REQ-SF-0200)
 ```
 
 ## TEST MAP
@@ -71,7 +75,8 @@ tests/
 │   ├── test_vector_dala_gtest.cpp       ← DAL A vector MC/DC tests (TAR-SF-001)
 │   ├── test_matrix_dala_gtest.cpp       ← DAL A matrix MC/DC tests (TAR-SF-001)
 │   ├── test_atmosphere_dala_gtest.cpp   ← DAL A atmosphere MC/DC tests (TAR-SF-002)
-│   └── test_terrain_dala_gtest.cpp      ← DAL A terrain MC/DC tests (TAR-SF-003)
+│   ├── test_terrain_dala_gtest.cpp      ← DAL A terrain MC/DC tests (TAR-SF-003)
+│   └── test_jsbsim_interface_dala_gtest.cpp ← DAL A JSBSim interface MC/DC tests (TAR-SF-005)
 ├── catch2/                              ← Catch2 test suite
 ├── doctest/                             ← Doctest test suite
 ├── boosttest/                           ← Boost.Test suite (disabled by default)

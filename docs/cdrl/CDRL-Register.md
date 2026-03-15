@@ -3,8 +3,8 @@
 | Field              | Value                                                        |
 |--------------------|--------------------------------------------------------------|
 | **Document ID**    | CDRL-SF-2026-001                                             |
-| **Version**        | 1.0                                                          |
-| **Date**           | 2026-03-14                                                   |
+| **Version**        | 1.2                                                          |
+| **Date**           | 2026-03-15                                                   |
 | **Project**        | SynthFlight — UAV Mission Simulation and Verification Platform |
 | **DAL**            | A (Catastrophic)                                             |
 | **Applicable Standard** | DO-178C (Software Considerations in Airborne Systems and Equipment Certification) |
@@ -321,7 +321,7 @@ This register covers all software life cycle data required for DAL A certificati
 | **File Path** | `src/` (repository source tree) |
 | **Status** | Draft |
 | **DAL A Applicability** | Required |
-| **Current Version** | 0.2 |
+| **Current Version** | 0.3 |
 | **Target Baseline Date** | 2026-10-01 |
 | **Responsible Role** | Software Development Lead |
 | **Review Authority** | Software Quality Assurance (SQA) / Peer Review |
@@ -369,7 +369,7 @@ This register covers all software life cycle data required for DAL A certificati
 | **File Path** | `tests/` (Google Test, Catch2, Doctest, Boost.Test, CppUnit, libFuzzer) |
 | **Status** | Draft |
 | **DAL A Applicability** | Required with Independence |
-| **Current Version** | 0.3 |
+| **Current Version** | 0.4 |
 | **Target Baseline Date** | 2026-09-15 |
 | **Responsible Role** | Software Verification Lead |
 | **Review Authority** | Software Quality Assurance (SQA) |
@@ -393,7 +393,7 @@ This register covers all software life cycle data required for DAL A certificati
 | **File Path** | `docs/verification/SVR-SynthFlight-Increment1.md` and `docs/svr/` |
 | **Status** | Draft |
 | **DAL A Applicability** | Required with Independence |
-| **Current Version** | 0.2 |
+| **Current Version** | 0.3 |
 | **Target Baseline Date** | 2026-11-15 |
 | **Responsible Role** | Software Verification Lead |
 | **Review Authority** | Software Quality Assurance (SQA) / DER |
@@ -594,6 +594,7 @@ All 17 items must be Baselined. The SAS and SCI are the final items baselined. T
 |---------|------|--------|-------------|
 | 1.0 | 2026-03-14 | Software Quality Assurance | Initial CDRL Register creation |
 | 1.1 | 2026-03-15 | Software Quality Assurance | Plans/standards baselined, doc ID and file path corrections, SRS count 149→119, SVCP/SVR status updated to Draft, SCMP rev bumped for TAR-SF-004 |
+| 1.2 | 2026-03-15 | Software Quality Assurance | TAR-SF-005: SC version 0.2→0.3 (new simulation module), SVCP version 0.3→0.4 (39 new test cases), SVR version 0.2→0.3 (JSBSim interface verification results) |
 
 ---
 

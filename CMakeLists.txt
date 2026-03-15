@@ -25,6 +25,7 @@ add_subdirectory(extern/jsbsim)
 add_subdirectory(src/math)
 add_subdirectory(src/models)
 add_subdirectory(src/terrain)
+add_subdirectory(src/simulation)
 
 # ── Test suites ──────────────────────────────────────────────────────────────
 enable_testing()

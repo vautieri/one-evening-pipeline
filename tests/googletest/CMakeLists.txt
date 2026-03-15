@@ -26,3 +26,11 @@ gtest_discover_tests(test_atmosphere_dala_gtest)
 add_executable(test_terrain_dala_gtest test_terrain_dala_gtest.cpp)
 target_link_libraries(test_terrain_dala_gtest PRIVATE synthflight_terrain GTest::gtest_main)
 gtest_discover_tests(test_terrain_dala_gtest)
+
+# TAR-SF-005: DAL A coverage tests for JSBSim Interface (REQ-SF-0200)
+add_executable(test_jsbsim_interface_dala_gtest test_jsbsim_interface_dala_gtest.cpp)
+target_link_libraries(test_jsbsim_interface_dala_gtest
+    PRIVATE synthflight_simulation GTest::gtest_main)
+target_compile_definitions(test_jsbsim_interface_dala_gtest
+    PRIVATE JSBSIM_ROOT_DIR="${CMAKE_SOURCE_DIR}/extern/jsbsim")
+gtest_discover_tests(test_jsbsim_interface_dala_gtest)
