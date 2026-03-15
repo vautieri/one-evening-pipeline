@@ -16,6 +16,11 @@ option(ENABLE_BOOSTTEST "Build Boost.Test suite"  OFF)  # Requires local Boost
 option(ENABLE_CPPUNIT  "Build CppUnit suite"      OFF)  # Requires local CppUnit
 option(ENABLE_FUZZING  "Build libFuzzer targets"   OFF)  # Requires Clang
 
+# ── JSBSim flight dynamics engine (git submodule, REQ-SF-0200) ──────────────
+option(BUILD_DOCS "Build JSBSim documentation" OFF)
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build JSBSim as static library" FORCE)
+add_subdirectory(extern/jsbsim)
+
 # ── The libraries under test ─────────────────────────────────────────────────
 add_subdirectory(src/math)
 add_subdirectory(src/models)
